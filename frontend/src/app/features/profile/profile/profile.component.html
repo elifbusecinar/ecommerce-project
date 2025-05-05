@@ -1,0 +1,84 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>My Profile</h1>
+    <div class="tabs">
+      <button [class.active]="activeTab === 'info'" (click)="activeTab = 'info'">Personal Info</button>
+      <button [class.active]="activeTab === 'addresses'" (click)="activeTab = 'addresses'">Addresses</button>
+      <button [class.active]="activeTab === 'orders'" (click)="activeTab = 'orders'">Orders</button>
+    </div>
+  </div>
+
+  <div class="profile-content" [ngSwitch]="activeTab">
+    <!-- Personal Info Tab -->
+    <div *ngSwitchCase="'info'" class="info-section">
+      <div class="section-header">
+        <h2>Personal Information</h2>
+        <button *ngIf="!editMode" (click)="editMode = true">Edit</button>
+        <button *ngIf="editMode" (click)="saveProfile()" class="save-btn">Save</button>
+      </div>
+
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" [(ngModel)]="profile.firstName" [readonly]="!editMode">
+      </div>
+
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" [(ngModel)]="profile.lastName" [readonly]="!editMode">
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="profile.email" [readonly]="!editMode">
+      </div>
+
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" [(ngModel)]="profile.phone" [readonly]="!editMode">
+      </div>
+    </div>
+
+    <!-- Addresses Tab -->
+    <div *ngSwitchCase="'addresses'" class="addresses-section">
+      <div class="section-header">
+        <h2>My Addresses</h2>
+        <button (click)="addAddress()">Add New Address</button>
+      </div>
+
+      <div class="address-list">
+        <div *ngFor="let address of profile.addresses; let i = index" class="address-card">
+          <div class="address-type">{{ address.type }}</div>
+          <div class="address-details">
+            <p>{{ address.street }}</p>
+            <p>{{ address.city }}, {{ address.state }} {{ address.zip }}</p>
+          </div>
+          <div class="address-actions">
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn" (click)="removeAddress(i)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div *ngSwitchCase="'orders'" class="orders-section">
+      <div class="section-header">
+        <h2>Order History</h2>
+      </div>
+
+      <div class="orders-list">
+        <div *ngFor="let order of profile.orders" class="order-card">
+          <div class="order-header">
+            <span class="order-id">Order #{{ order.id }}</span>
+            <span class="order-date">{{ order.date | date:'mediumDate' }}</span>
+          </div>
+          <div class="order-details">
+            <span class="order-total">${{ order.total.toFixed(2) }}</span>
+            <span class="order-status" [class]="order.status.toLowerCase()">{{ order.status }}</span>
+          </div>
+          <a [routerLink]="['/orders', order.id]" class="view-order">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
