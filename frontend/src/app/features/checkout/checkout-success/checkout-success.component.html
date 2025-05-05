@@ -1,0 +1,34 @@
+<div class="success-container">
+  <div class="success-content">
+    <div class="success-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+
+    <h1>Order Confirmed!</h1>
+    <p class="message">Thank you for your purchase. Your order has been received.</p>
+
+    <div class="order-details">
+      <h2>Order Details</h2>
+      <div class="detail-row">
+        <span>Order Number:</span>
+        <span>{{ orderNumber }}</span>
+      </div>
+      <div class="detail-row">
+        <span>Date:</span>
+        <span>{{ today | date:'medium' }}</span>
+      </div>
+      <div class="detail-row">
+        <span>Payment Method:</span>
+        <span>Credit Card</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button routerLink="/products" class="continue-shopping">Continue Shopping</button>
+      <button routerLink="/orders" class="view-orders">View Orders</button>
+    </div>
+  </div>
+</div> 

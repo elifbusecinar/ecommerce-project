@@ -1,0 +1,42 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Welcome to Our E-Commerce Store</h1>
+      <p>Discover amazing products at great prices</p>
+      <button routerLink="/products" class="cta-button">Shop Now</button>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="featured-products">
+    <h2>Featured Products</h2>
+    <div class="product-grid">
+      <div class="product-card" *ngFor="let product of featuredProducts">
+        <img [src]="product.image" [alt]="product.name">
+        <div class="product-info">
+          <h3>{{ product.name }}</h3>
+          <p class="price">${{ product.price }}</p>
+          <p class="description">{{ product.description }}</p>
+          <button [routerLink]="['/products', product.id]">View Details</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories">
+    <h2>Shop by Category</h2>
+    <div class="category-grid">
+      <div class="category-card" *ngFor="let category of categories">
+        <img [src]="category.image" [alt]="category.name">
+        <div class="category-info">
+          <h3>{{ category.name }}</h3>
+          <button [routerLink]="['/products']" [queryParams]="{category: category.id}">
+            Browse {{ category.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

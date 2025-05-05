@@ -1,0 +1,188 @@
+@import 'variables';
+
+// Reset
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// Base styles
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: $font-family-base;
+  color: $dark;
+  background-color: $light;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: $spacer;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+}
+
+p {
+  margin-bottom: $spacer;
+}
+
+a {
+  color: $primary;
+  text-decoration: none;
+  transition: $transition-base;
+
+  &:hover {
+    color: darken($primary, 15%);
+  }
+}
+
+// Forms
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.form-group {
+  margin-bottom: $spacer;
+
+  label {
+    display: block;
+    margin-bottom: $spacer * 0.5;
+    font-weight: $font-weight-medium;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: $spacer * 0.5;
+    border: 1px solid $secondary;
+    border-radius: $border-radius;
+    transition: $transition-base;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+    }
+  }
+}
+
+// Buttons
+.btn {
+  display: inline-block;
+  padding: $spacer * 0.5 $spacer;
+  font-weight: $font-weight-medium;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+  transition: $transition-base;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &-primary {
+    color: white;
+    background-color: $primary;
+    border-color: $primary;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary, 7.5%);
+      border-color: darken($primary, 10%);
+    }
+  }
+
+  &-secondary {
+    color: white;
+    background-color: $secondary;
+    border-color: $secondary;
+
+    &:hover:not(:disabled) {
+      background-color: darken($secondary, 7.5%);
+      border-color: darken($secondary, 10%);
+    }
+  }
+
+  &-danger {
+    color: white;
+    background-color: $danger;
+    border-color: $danger;
+
+    &:hover:not(:disabled) {
+      background-color: darken($danger, 7.5%);
+      border-color: darken($danger, 10%);
+    }
+  }
+}
+
+// Utilities
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.mt-1 { margin-top: map-get($spacers, 1); }
+.mt-2 { margin-top: map-get($spacers, 2); }
+.mt-3 { margin-top: map-get($spacers, 3); }
+.mt-4 { margin-top: map-get($spacers, 4); }
+.mt-5 { margin-top: map-get($spacers, 5); }
+
+.mb-1 { margin-bottom: map-get($spacers, 1); }
+.mb-2 { margin-bottom: map-get($spacers, 2); }
+.mb-3 { margin-bottom: map-get($spacers, 3); }
+.mb-4 { margin-bottom: map-get($spacers, 4); }
+.mb-5 { margin-bottom: map-get($spacers, 5); }
+
+.ml-1 { margin-left: map-get($spacers, 1); }
+.ml-2 { margin-left: map-get($spacers, 2); }
+.ml-3 { margin-left: map-get($spacers, 3); }
+.ml-4 { margin-left: map-get($spacers, 4); }
+.ml-5 { margin-left: map-get($spacers, 5); }
+
+.mr-1 { margin-right: map-get($spacers, 1); }
+.mr-2 { margin-right: map-get($spacers, 2); }
+.mr-3 { margin-right: map-get($spacers, 3); }
+.mr-4 { margin-right: map-get($spacers, 4); }
+.mr-5 { margin-right: map-get($spacers, 5); }
+
+// Responsive utilities
+@media (max-width: $breakpoint-sm) {
+  .hidden-xs {
+    display: none !important;
+  }
+}
+
+@media (min-width: $breakpoint-sm) and (max-width: $breakpoint-md) {
+  .hidden-sm {
+    display: none !important;
+  }
+}
+
+@media (min-width: $breakpoint-md) and (max-width: $breakpoint-lg) {
+  .hidden-md {
+    display: none !important;
+  }
+}
+
+@media (min-width: $breakpoint-lg) {
+  .hidden-lg {
+    display: none !important;
+  }
+} 

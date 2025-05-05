@@ -1,0 +1,29 @@
+<div class="mobile-menu" [class.open]="isOpen">
+  <div class="menu-overlay" (click)="close()"></div>
+  <div class="menu-content">
+    <div class="menu-header">
+      <h2>Menu</h2>
+      <button class="close-btn" (click)="close()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <nav class="menu-items">
+      <a *ngFor="let item of menuItems"
+         [routerLink]="item.route"
+         (click)="close()"
+         class="menu-item"
+         routerLinkActive="active">
+        <span class="material-icons">{{ item.icon }}</span>
+        <span class="label">{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <div class="menu-footer">
+      <a routerLink="/auth/login" (click)="close()" class="auth-btn">
+        <span class="material-icons">login</span>
+        <span>Sign In</span>
+      </a>
+    </div>
+  </div>
+</div>

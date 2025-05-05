@@ -1,0 +1,153 @@
+<div class="checkout-container">
+  <h1>Checkout</h1>
+
+  <div class="checkout-content">
+    <!-- Order Summary -->
+    <div class="cart-summary">
+      <h2>Order Summary</h2>
+      <div class="cart-items">
+        <div *ngFor="let item of cartItems" class="cart-item">
+          <div class="item-image">
+            <img [src]="item.product.images[0] || item.product.imageUrl || 'assets/images/placeholder.png'" [alt]="item.product.name || 'Product image'">
+          </div>
+          <div class="item-details">
+            <h3>{{ item.product.name || 'Unknown Product' }}</h3>
+            <p class="price">${{ item.product.price.toFixed(2) || '0.00' }}</p>
+            <div class="quantity-controls">
+              <button (click)="updateQuantity(item.product.id, item.quantity - 1)" [disabled]="item.quantity <= 1">-</button>
+              <input type="number" [(ngModel)]="item.quantity" 
+                     (change)="updateQuantity(item.product.id, item.quantity)"
+                     min="1" [max]="item.product.stock || 0">
+              <button (click)="updateQuantity(item.product.id, item.quantity + 1)" [disabled]="item.quantity >= (item.product.stock || 0)">+</button>
+            </div>
+          </div>
+          <div class="item-total">
+            <p>${{ ((item.product.price || 0) * item.quantity).toFixed(2) }}</p>
+            <button class="remove-item" (click)="removeItem(item.product.id)">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-totals">
+        <div class="summary-row">
+          <span>Subtotal:</span>
+          <span>${{ calculateTotal().toFixed(2) }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping:</span>
+          <span>Free</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total:</span>
+          <span>${{ calculateTotal().toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkout Form -->
+    <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="checkout-form">
+      <h2>Shipping Information</h2>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input id="firstName" type="text" formControlName="firstName">
+          <div *ngIf="checkoutForm.get('firstName')?.invalid && checkoutForm.get('firstName')?.touched" class="error">
+            First name is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input id="lastName" type="text" formControlName="lastName">
+          <div *ngIf="checkoutForm.get('lastName')?.invalid && checkoutForm.get('lastName')?.touched" class="error">
+            Last name is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email">
+        <div *ngIf="checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched" class="error">
+          <span *ngIf="checkoutForm.get('email')?.errors?.['required']">Email is required</span>
+          <span *ngIf="checkoutForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input id="address" type="text" formControlName="address">
+        <div *ngIf="checkoutForm.get('address')?.invalid && checkoutForm.get('address')?.touched" class="error">
+          Address is required
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">City</label>
+          <input id="city" type="text" formControlName="city">
+          <div *ngIf="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched" class="error">
+            City is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="state">State</label>
+          <input id="state" type="text" formControlName="state">
+          <div *ngIf="checkoutForm.get('state')?.invalid && checkoutForm.get('state')?.touched" class="error">
+            State is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="zipCode">ZIP Code</label>
+          <input id="zipCode" type="text" formControlName="zipCode">
+          <div *ngIf="checkoutForm.get('zipCode')?.invalid && checkoutForm.get('zipCode')?.touched" class="error">
+            <span *ngIf="checkoutForm.get('zipCode')?.errors?.['required']">ZIP code is required</span>
+            <span *ngIf="checkoutForm.get('zipCode')?.errors?.['pattern']">Please enter a valid 5-digit ZIP code</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Payment Information</h2>
+
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <input id="cardNumber" type="text" formControlName="cardNumber" maxlength="16">
+        <div *ngIf="checkoutForm.get('cardNumber')?.invalid && checkoutForm.get('cardNumber')?.touched" class="error">
+          <span *ngIf="checkoutForm.get('cardNumber')?.errors?.['required']">Card number is required</span>
+          <span *ngIf="checkoutForm.get('cardNumber')?.errors?.['pattern']">Please enter a valid 16-digit card number</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="expiryDate">Expiry Date (MM/YY)</label>
+          <input id="expiryDate" type="text" formControlName="expiryDate" placeholder="MM/YY" maxlength="5">
+          <div *ngIf="checkoutForm.get('expiryDate')?.invalid && checkoutForm.get('expiryDate')?.touched" class="error">
+            <span *ngIf="checkoutForm.get('expiryDate')?.errors?.['required']">Expiry date is required</span>
+            <span *ngIf="checkoutForm.get('expiryDate')?.errors?.['pattern']">Please enter a valid expiry date (MM/YY)</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <input id="cvv" type="text" formControlName="cvv" maxlength="4">
+          <div *ngIf="checkoutForm.get('cvv')?.invalid && checkoutForm.get('cvv')?.touched" class="error">
+            <span *ngIf="checkoutForm.get('cvv')?.errors?.['required']">CVV is required</span>
+            <span *ngIf="checkoutForm.get('cvv')?.errors?.['pattern']">Please enter a valid CVV</span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="paymentError" class="error-message">
+        {{ paymentError }}
+      </div>
+
+      <button type="submit" class="submit-button" [disabled]="checkoutForm.invalid || isProcessing">
+        {{ isProcessing ? 'Processing...' : 'Place Order' }}
+      </button>
+    </form>
+  </div>
+</div> 

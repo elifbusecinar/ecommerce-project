@@ -1,1 +1,68 @@
-<p>product-list works!</p>
+<div class="product-list-container">
+  <div class="filters">
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="search()"
+        placeholder="Search products..."
+        class="search-input"
+      />
+      <button (click)="search()" class="search-button">Search</button>
+    </div>
+
+    <div class="category-filter">
+      <select [(ngModel)]="selectedCategory" (change)="filterByCategory()" class="category-select">
+        <option value="">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="sort-options">
+      <select [(ngModel)]="sortOption" (change)="sort()" class="sort-select">
+        <option value="name">Name</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating">Rating</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="products-grid">
+    <div *ngFor="let product of products" class="product-card">
+      <img [src]="product.images[0] || product.imageUrl" [alt]="product.name" class="product-image" />
+      <div class="product-info">
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-price">${{ product.price.toFixed(2) }}</p>
+        <div class="product-rating">
+          <span *ngFor="let star of [1,2,3,4,5]" class="star"
+            [class.filled]="star <= product.rating">★</span>
+          <span class="rating-count">({{ product.reviewCount }})</span>
+        </div>
+        <button (click)="addToCart(product)" class="add-to-cart-btn">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination">
+    <button
+      [disabled]="currentPage === 1"
+      (click)="changePage(currentPage - 1)"
+      class="pagination-btn"
+    >
+      Previous
+    </button>
+    <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+    <button
+      [disabled]="currentPage === totalPages"
+      (click)="changePage(currentPage + 1)"
+      class="pagination-btn"
+    >
+      Next
+    </button>
+  </div>
+</div>
