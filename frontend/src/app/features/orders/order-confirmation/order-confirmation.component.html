@@ -1,0 +1,60 @@
+<div class="confirmation-container">
+  <div class="confirmation-card">
+    <div class="success-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+
+    <h1>Order Confirmed!</h1>
+    <p class="thank-you">Thank you for your purchase</p>
+
+    <div class="order-details">
+      <div class="detail-row">
+        <span class="label">Order Number:</span>
+        <span class="value">#{{ orderNumber }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Order Date:</span>
+        <span class="value">{{ orderDate | date:'medium' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Estimated Delivery:</span>
+        <span class="value">{{ estimatedDelivery | date:'mediumDate' }}</span>
+      </div>
+    </div>
+
+    <div class="next-steps">
+      <h2>What's Next?</h2>
+      <ul>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          You will receive an order confirmation email
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          We will notify you when your order ships
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          Track your order status via email updates
+        </li>
+      </ul>
+    </div>
+
+    <div class="actions">
+      <a routerLink="/products" class="continue-shopping">Continue Shopping</a>
+      <a routerLink="/orders" class="view-order">View Order Status</a>
+    </div>
+  </div>
+</div> 

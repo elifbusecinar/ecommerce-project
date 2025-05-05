@@ -1,0 +1,44 @@
+<div class="tracking-container">
+  <div class="tracking-form">
+    <h2>Track Your Order</h2>
+    <div class="search-box">
+      <input type="text" [(ngModel)]="orderNumber" placeholder="Enter your order number" />
+      <button (click)="trackOrder()">Track</button>
+    </div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+  </div>
+
+  <div *ngIf="order" class="order-details">
+    <div class="order-header">
+      <h3>Order #{{ order.id }}</h3>
+      <div class="tracking-number">
+        Tracking Number: {{ order.trackingNumber }}
+      </div>
+    </div>
+
+    <div class="status-timeline">
+      <div *ngFor="let status of order.statusHistory" class="status-item">
+        <div class="status-dot"></div>
+        <div class="status-info">
+          <div class="status-date">{{ status.date | date:'mediumDate' }}</div>
+          <div class="status-title">{{ status.status }}</div>
+          <div class="status-description">{{ status.description }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-summary">
+      <h4>Order Summary</h4>
+      <div class="items-list">
+        <div *ngFor="let item of order.items" class="item">
+          <span>{{ item.name }}</span>
+          <span>x{{ item.quantity }}</span>
+        </div>
+      </div>
+      <div class="total">
+        <span>Total</span>
+        <span>${{ order.total.toFixed(2) }}</span>
+      </div>
+    </div>
+  </div>
+</div>

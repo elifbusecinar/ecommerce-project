@@ -1,0 +1,85 @@
+<div class="order-confirmation-container">
+  <div *ngIf="loading" class="loading">
+    <p>Loading order details...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <a routerLink="/" class="back-link">Return to Home</a>
+  </div>
+
+  <div *ngIf="!loading && !error && orderDetails" class="order-details">
+    <div class="success-message">
+      <h1>Order Confirmed!</h1>
+      <p>Thank you for your purchase. Your order has been received.</p>
+    </div>
+
+    <div class="order-info">
+      <div class="info-section">
+        <h2>Order Information</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Order ID:</span>
+            <span class="value">{{ orderDetails.id }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Order Date:</span>
+            <span class="value">{{ orderDetails.createdAt | date:'medium' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Status:</span>
+            <span class="value status" [ngClass]="orderDetails.status.toLowerCase()">
+              {{ orderDetails.status }}
+            </span>
+          </div>
+          <div class="info-item" *ngIf="orderDetails.trackingNumber">
+            <span class="label">Tracking Number:</span>
+            <span class="value">{{ orderDetails.trackingNumber }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h2>Shipping Address</h2>
+        <div class="address">
+          <p>{{ orderDetails.shippingAddress.firstName }} {{ orderDetails.shippingAddress.lastName }}</p>
+          <p>{{ orderDetails.shippingAddress.address }}</p>
+          <p>{{ orderDetails.shippingAddress.city }}, {{ orderDetails.shippingAddress.state }} {{ orderDetails.shippingAddress.zipCode }}</p>
+          <p>{{ orderDetails.shippingAddress.email }}</p>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h2>Order Items</h2>
+        <div class="order-items">
+          <div *ngFor="let item of orderDetails.items" class="order-item">
+            <div class="item-details">
+              <h3>{{ item.productName }}</h3>
+              <p class="quantity">Quantity: {{ item.quantity }}</p>
+              <p class="price">${{ item.unitPrice.toFixed(2) }} each</p>
+            </div>
+            <div class="item-total">
+              ${{ item.totalPrice.toFixed(2) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="order-total">
+          <div class="total-row">
+            <span>Total Amount:</span>
+            <span>${{ orderDetails.totalAmount.toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a routerLink="/" class="continue-shopping">Continue Shopping</a>
+      <button *ngIf="orderDetails.status === 'PENDING'" 
+              (click)="cancelOrder()" 
+              class="cancel-order">
+        Cancel Order
+      </button>
+    </div>
+  </div>
+</div> 

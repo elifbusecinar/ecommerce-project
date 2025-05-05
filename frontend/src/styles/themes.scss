@@ -1,0 +1,111 @@
+@import 'variables';
+
+// Light theme (default)
+:root {
+  --background-color: #{$light};
+  --text-color: #{$dark};
+  --border-color: #{$secondary};
+  --input-background: white;
+  --card-background: white;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+// Dark theme
+[data-theme='dark'] {
+  --background-color: #1a1a1a;
+  --text-color: #f8f9fa;
+  --border-color: #4a4a4a;
+  --input-background: #2d2d2d;
+  --card-background: #2d2d2d;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+
+  .card {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+  }
+
+  input, textarea, select {
+    background-color: var(--input-background);
+    color: var(--text-color);
+    border-color: var(--border-color);
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+
+  .btn {
+    &-outline-primary {
+      color: $primary;
+      border-color: $primary;
+
+      &:hover {
+        background-color: $primary;
+        color: white;
+      }
+    }
+
+    &-outline-secondary {
+      color: $secondary;
+      border-color: $secondary;
+
+      &:hover {
+        background-color: $secondary;
+        color: white;
+      }
+    }
+  }
+
+  a {
+    color: lighten($primary, 15%);
+
+    &:hover {
+      color: lighten($primary, 25%);
+    }
+  }
+
+  .table {
+    color: var(--text-color);
+
+    th {
+      background-color: var(--card-background);
+    }
+
+    td {
+      border-color: var(--border-color);
+    }
+  }
+
+  .modal {
+    .modal-content {
+      background-color: var(--card-background);
+      color: var(--text-color);
+    }
+
+    .modal-header {
+      border-bottom-color: var(--border-color);
+    }
+
+    .modal-footer {
+      border-top-color: var(--border-color);
+    }
+  }
+
+  .dropdown-menu {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+
+    .dropdown-item {
+      color: var(--text-color);
+
+      &:hover {
+        background-color: var(--border-color);
+      }
+    }
+  }
+} 
