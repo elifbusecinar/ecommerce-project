@@ -111,7 +111,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String jwt = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
+        String jwt = jwtUtils.generateJwtToken(authentication);
 
         return ResponseEntity.ok(new LoginResponse(jwt));
     }

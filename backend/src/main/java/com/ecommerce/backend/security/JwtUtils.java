@@ -24,12 +24,12 @@ public class JwtUtils {
 
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        return generateTokenFromUsername(userPrincipal.getUsername());
+        return generateTokenFromEmail(userPrincipal);
     }
 
-    public String generateTokenFromUsername(String username) {
+    public String generateTokenFromEmail(UserDetailsImpl userPrincipal) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(userPrincipal.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
