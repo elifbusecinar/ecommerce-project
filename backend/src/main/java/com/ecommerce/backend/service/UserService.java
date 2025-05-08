@@ -8,10 +8,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.ecommerce.backend.model.Address;
+import com.ecommerce.backend.model.RoleName;
+import com.ecommerce.backend.repository.RoleRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
@@ -19,14 +24,31 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     public User createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalStateException("Username already exists: " + user.getUsername());
         }
 
+        if (user.getEmail() != null && userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalStateException("Email already exists: " + user.getEmail()); 
+        }
+
+        if (user.getAddresses() != null && !user.getAddresses().isEmpty()) {
+            for (Address address : user.getAddresses()) {
+                address.setUser(user); // Her adrese, bu kullanıcıyı ata
+            }
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setActive(true);
+
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+            .orElseThrow(() -> new RuntimeException("Error: Default role ROLE_USER is not found."));
+        roles.add(userRole);
+        user.setRoles(roles);
         return userRepository.save(user);
     }
 

@@ -16,7 +16,8 @@
           [class.is-invalid]="emailInput.invalid && emailInput.touched"
         />
         <div class="invalid-feedback" *ngIf="emailInput.invalid && emailInput.touched">
-          Please enter a valid email address
+          <span *ngIf="emailInput.errors?.['required']">Email is required</span>
+          <span *ngIf="emailInput.errors?.['email']">Please enter a valid email address</span>
         </div>
       </div>
 

@@ -23,14 +23,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .disabled(!user.isActive()) //! ekledim
-                //.disabled(Boolean.FALSE.equals(user.isActive())) // ✅ safe way
+                .disabled(!user.isActive())
                 .accountExpired(false)
                 .credentialsExpired(false)
                 .accountLocked(false)
@@ -40,3 +39,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .build();
     }
 }
+
