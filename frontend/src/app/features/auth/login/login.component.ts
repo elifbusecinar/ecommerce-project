@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService, LoginRequest } from '../../../core/services/auth.service'
 
 @Component({
   selector: 'app-login',
@@ -11,6 +11,7 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule]
 })
+
 export class LoginComponent {
   email: string = '';
   password: string = '';
@@ -26,12 +27,20 @@ export class LoginComponent {
     this.loading = true;
     this.error = null;
 
-    this.authService.login({ email: this.email, password: this.password }).subscribe({
-      next: () => {
-        this.router.navigate(['/']);
+    const loginData: LoginRequest = { email: this.email, password: this.password };
+
+
+    this.authService.login(loginData).subscribe({
+      next: (response) => { // response'u loglayabilirsin (token içerir)
+        console.log('Login successful, token:', response.token);
+        this.router.navigate(['/']); // Ana sayfaya yönlendir
       },
       error: (error) => {
-        this.error = 'An error occurred during login. Please try again.';
+        console.error('Login error:', error); // Hatanın tamamını logla
+        this.error = error?.error?.message || 'Invalid email or password';
+        this.loading = false;
+      },
+      complete: () => {
         this.loading = false;
       }
     });
