@@ -6,7 +6,7 @@ import com.ecommerce.backend.payload.response.JwtResponse;
 import com.ecommerce.backend.repository.*;
 import com.ecommerce.backend.security.JwtUtils;
 import com.ecommerce.backend.security.UserDetailsImpl;
-import com.ecommerce.backend.security.JwtTokenUtil;
+import com.ecommerce.backend.security.JwtUtils;
 import com.ecommerce.backend.service.UserService;
 import com.ecommerce.backend.dto.LoginRequest;
 import com.ecommerce.backend.dto.LoginResponse;
@@ -41,7 +41,6 @@ public class AuthController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
-    private final JwtTokenUtil jwtTokenUtil;
     private final UserService userService;
 
     @Operation(
@@ -53,6 +52,7 @@ public class AuthController {
         @ApiResponse(responseCode = "400", description = "Email already exists"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(
         @Parameter(description = "User registration details", required = true)
@@ -98,17 +98,20 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "Invalid credentials"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                loginRequest.getUsername(),
+                loginRequest.getEmail(),
                 loginRequest.getPassword()
             )
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtTokenUtil.generateToken(authentication);
+        
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String jwt = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
 
         return ResponseEntity.ok(new LoginResponse(jwt));
     }
