@@ -120,3 +120,25 @@
     transform: translateY(0);
   }
 }
+
+.tab-switch {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.tab {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px 8px 0 0;
+  background: #f1f5f9;
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 500;
+  margin-right: 0.5rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab.active, .tab:hover {
+  background: #2563eb;
+  color: #fff;
+}
