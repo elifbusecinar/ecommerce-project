@@ -1,40 +1,70 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <h2>Register</h2>
-    <form [formGroup]="registerForm" (ngSubmit)="submit()">
+<div class="register-bg">
+  <div class="register-card">
+    <div class="tab-switch">
+      <a routerLink="/auth/login" [ngClass]="{'tab': true, 'active': isLoginRoute()}">Login</a>
+      <a routerLink="/auth/register" [ngClass]="{'tab': true, 'active': isRegisterRoute()}">Register</a>
+    </div>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <h2>Register</h2>
       <div class="form-group">
-        <label for="username">Username</label>
-        <input 
-          id="username"
-          type="text" 
-          formControlName="username"
-          placeholder="Enter your username">
+        <label for="firstName">First Name</label>
+        <input id="firstName" type="text" formControlName="firstName" class="form-control" [class.is-invalid]="isFieldInvalid('firstName')" placeholder="Your name" />
+        <div class="invalid-feedback" *ngIf="isFieldInvalid('firstName')">
+          First name is required
+        </div>
       </div>
-
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input id="lastName" type="text" formControlName="lastName" class="form-control" [class.is-invalid]="isFieldInvalid('lastName')" placeholder="Your surname" />
+        <div class="invalid-feedback" *ngIf="isFieldInvalid('lastName')">
+          Last name is required
+        </div>
+      </div>
       <div class="form-group">
         <label for="email">Email</label>
-        <input 
-          id="email"
-          type="email" 
-          formControlName="email"
-          placeholder="Enter your email">
+        <input id="email" type="email" formControlName="email" class="form-control" [class.is-invalid]="isFieldInvalid('email')" placeholder="example@mail.com" />
+        <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
+          Please enter a valid email address
+        </div>
       </div>
-
       <div class="form-group">
-        <label for="password">Password</label>
-        <input 
-          id="password"
-          type="password" 
-          formControlName="password"
-          placeholder="Enter your password">
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" class="form-control" [class.is-invalid]="isFieldInvalid('username')" placeholder="Your username" />
+        <div class="invalid-feedback" *ngIf="isFieldInvalid('username')">
+          Username is required
+        </div>
       </div>
-
-      <button type="submit" [disabled]="registerForm.invalid">Register</button>
-      
-      <div class="auth-links">
-        Already have an account? <a routerLink="/login">Login here</a>
+      <div class="form-group password-group">
+        <label for="password">Password</label>
+        <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control" [class.is-invalid]="isFieldInvalid('password')" placeholder="At least 6 characters" />
+        <button type="button" class="show-hide-btn" (click)="showPassword = !showPassword" tabindex="-1">
+          <span *ngIf="!showPassword">👁️</span><span *ngIf="showPassword">🙈</span>
+        </button>
+        <div class="invalid-feedback" *ngIf="isFieldInvalid('password')">
+          Password must be at least 6 characters
+        </div>
+      </div>
+      <div class="form-group password-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" class="form-control" [class.is-invalid]="isFieldInvalid('confirmPassword')" placeholder="Repeat password" />
+        <button type="button" class="show-hide-btn" (click)="showConfirmPassword = !showConfirmPassword" tabindex="-1">
+          <span *ngIf="!showConfirmPassword">👁️</span><span *ngIf="showConfirmPassword">🙈</span>
+        </button>
+        <div class="invalid-feedback" *ngIf="isFieldInvalid('confirmPassword')">
+          Passwords do not match
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || isLoading">
+        <span *ngIf="isLoading" class="spinner"></span>
+        {{ isLoading ? 'Registering...' : 'Register' }}
+      </button>
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
       </div>
     </form>
+    <div class="login-link">
+      Already have an account?
+      <a routerLink="/auth/login"><b>Login here</b></a>
+    </div>
   </div>
 </div>
-  
