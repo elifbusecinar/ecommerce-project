@@ -38,9 +38,11 @@ export class RegisterComponent {
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
-    
+
     if (password && confirmPassword && password.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
+    } else if (confirmPassword && confirmPassword.hasError('passwordMismatch')) {
+      confirmPassword.setErrors(null);
     }
   }
 
@@ -55,31 +57,21 @@ export class RegisterComponent {
       this.errorMessage = '';
 
       const { confirmPassword, ...userData } = this.registerForm.value;
-      
+
       this.authService.register(userData).subscribe({
         next: () => {
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login']); // Başarılı kayıt sonrası login sayfasına yönlendir
         },
         error: (error) => {
           this.isLoading = false;
           this.errorMessage = error?.error?.message || error?.error || 'An error occurred during registration';
+        },
+        complete: () => {
+            this.isLoading = false;
         }
       });
+    } else {
+        this.registerForm.markAllAsTouched();
     }
-  }
-
-  goLogin(event: Event) {
-    event.preventDefault();
-    setTimeout(() => {
-      this.router.navigate(['/auth/login']);
-    }, 0);
-  }
-
-  isLoginRoute() {
-    return this.router.url.includes('login');
-  }
-
-  isRegisterRoute() {
-    return this.router.url.includes('register');
   }
 }
