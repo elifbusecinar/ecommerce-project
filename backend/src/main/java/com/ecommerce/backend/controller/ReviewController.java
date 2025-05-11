@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/reviews")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Review", description = "Product review management APIs")

@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/orders")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Order", description = "Order management APIs")
