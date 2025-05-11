@@ -1,8 +1,8 @@
 <div class="login-container">
   <div class="login-box">
     <div class="tab-switch">
-      <a routerLink="/auth/login" [ngClass]="{'tab': true, 'active': isLoginRoute()}">Login</a>
-      <a routerLink="/auth/register" [ngClass]="{'tab': true, 'active': isRegisterRoute()}">Register</a>
+      <a routerLink="/login" routerLinkActive="active" class="tab">Login</a>
+      <a routerLink="/register" routerLinkActive="active" class="tab">Register</a>
     </div>
     <h2>Login</h2>
     <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
@@ -51,9 +51,8 @@
       </button>
 
       <div class="register-link">
-        Don't have an account? <a routerLink="/auth/register">Register here</a>
+        Don't have an account? <a routerLink="/register">Register here</a>
       </div>
     </form>
   </div>
 </div>
-  
