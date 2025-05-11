@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService, LoginRequest } from '../../../core/services/auth.service'
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService, LoginRequest } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +11,6 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule]
 })
-
 export class LoginComponent {
   email: string = '';
   password: string = '';
@@ -30,14 +28,13 @@ export class LoginComponent {
 
     const loginData: LoginRequest = { email: this.email, password: this.password };
 
-
     this.authService.login(loginData).subscribe({
-      next: (response) => { // response'u loglayabilirsin (token içerir)
+      next: (response) => {
         console.log('Login successful, token:', response.token);
-        this.router.navigate(['/']); // Ana sayfaya yönlendir
+        this.router.navigate(['/']); // Ana sayfaya veya istenen başka bir sayfaya yönlendir
       },
       error: (error) => {
-        console.error('Login error:', error); // Hatanın tamamını logla
+        console.error('Login error:', error);
         this.error = error?.error?.message || 'Invalid email or password';
         this.loading = false;
       },
@@ -45,12 +42,5 @@ export class LoginComponent {
         this.loading = false;
       }
     });
-  }
-
-  isLoginRoute() {
-    return this.router.url.includes('login');
-  }
-  isRegisterRoute() {
-    return this.router.url.includes('register');
   }
 }
