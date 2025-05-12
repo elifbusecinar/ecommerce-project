@@ -1,1 +1,44 @@
-<p>dashboard works!</p>
+<div class="admin-dashboard-container">
+  <header class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <p>Welcome to the admin control panel. Select an option below to manage your e-commerce platform.</p>
+  </header>
+
+  <nav class="dashboard-nav">
+    <a routerLink="/admin/users" class="nav-card">
+      <div class="nav-card-icon">
+        <i class="fas fa-users-cog"></i> </div>
+      <div class="nav-card-body">
+        <h2>User Management</h2>
+        <p>View, activate, or deactivate user accounts and manage roles.</p>
+      </div>
+    </a>
+
+    <a routerLink="/admin/products" class="nav-card">
+      <div class="nav-card-icon">
+        <i class="fas fa-box-open"></i> </div>
+      <div class="nav-card-body">
+        <h2>Product Management</h2>
+        <p>Add, edit, or remove products and manage inventory.</p>
+      </div>
+    </a>
+
+    <a routerLink="/admin/orders" class="nav-card">
+      <div class="nav-card-icon">
+        <i class="fas fa-receipt"></i> </div>
+      <div class="nav-card-body">
+        <h2>Order Management</h2>
+        <p>View and manage customer orders and track shipments.</p>
+      </div>
+    </a>
+
+    <a routerLink="/admin/analytics" class="nav-card">
+      <div class="nav-card-icon">
+        <i class="fas fa-chart-line"></i> </div>
+      <div class="nav-card-body">
+        <h2>Analytics</h2>
+        <p>View sales reports, user statistics, and other metrics.</p>
+      </div>
+    </a>
+    </nav>
+</div>

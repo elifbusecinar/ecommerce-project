@@ -32,14 +32,14 @@
 
   <div class="products-grid">
     <div *ngFor="let product of products" class="product-card">
-      <img [src]="product.images[0] || product.imageUrl" [alt]="product.name" class="product-image" />
+      <img [src]="product.images?.[0] || product.imageUrl" [alt]="product.name" class="product-image" />
       <div class="product-info">
         <h3 class="product-name">{{ product.name }}</h3>
         <p class="product-price">${{ product.price.toFixed(2) }}</p>
         <div class="product-rating">
           <span *ngFor="let star of [1,2,3,4,5]" class="star"
-            [class.filled]="star <= product.rating">★</span>
-          <span class="rating-count">({{ product.reviewCount }})</span>
+            [class.filled]="star <= (product.rating ?? 0)">★</span>
+          <span class="rating-count">({{ product.reviewCount ?? 0 }})</span>
         </div>
         <button (click)="addToCart(product)" class="add-to-cart-btn">
           Add to Cart

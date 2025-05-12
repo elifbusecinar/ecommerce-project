@@ -1,0 +1,83 @@
+<div class="container">
+  <h2 class="mb-4">Order Management</h2>
+  <div class="card p-3 mb-3">
+    <div class="row">
+      <div class="col">
+        <label>Status</label>
+        <select>
+          <option>All</option>
+          <option>Pending</option>
+          <option>Processing</option>
+          <option>Shipped</option>
+          <option>Delivered</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Date Range</label>
+        <input type="date">
+      </div>
+      <div class="col">
+        <label>Search</label>
+        <input type="text" placeholder="Order ID or Customer">
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders">
+            <td>{{order.id}}</td>
+            <td>{{order.customerName}}</td>
+            <td>{{order.orderDate | date}}</td>
+            <td>
+              <span class="badge"
+                [ngClass]="{
+                  'success': order.status === 'Delivered',
+                  'warning': order.status === 'Pending',
+                  'info': order.status === 'Processing',
+                  'primary': order.status === 'Shipped'
+                }">
+                {{order.status}}
+              </span>
+            </td>
+            <td>{{order.total | currency}}</td>
+            <td>
+              <span class="badge"
+                [ngClass]="{
+                  'success': order.paymentStatus === 'Paid',
+                  'danger': order.paymentStatus !== 'Paid'
+                }">
+                {{order.paymentStatus}}
+              </span>
+            </td>
+            <td>
+              <button class="btn primary">View</button>
+              <button class="btn danger">Cancel</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <nav>
+      <ul class="pagination">
+        <li><a href="#">Previous</a></li>
+        <li class="active"><a href="#">1</a></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">Next</a></li>
+      </ul>
+    </nav>
+  </div>
+</div> 

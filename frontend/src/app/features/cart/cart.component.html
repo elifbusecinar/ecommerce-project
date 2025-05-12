@@ -12,7 +12,7 @@
     <div class="cart-items">
       <div *ngFor="let item of cartItems" class="cart-item">
         <div class="item-image">
-          <img [src]="item.product.images[0]" [alt]="item.product.name">
+          <img [src]="item.product.images?.[0] || item.product.imageUrl" [alt]="item.product.name">
         </div>
         <div class="item-details">
           <h3>{{ item.product.name }}</h3>
@@ -21,7 +21,7 @@
             <button (click)="updateQuantity(item.product.id, item.quantity - 1)">-</button>
             <input type="number" [(ngModel)]="item.quantity" 
                    (change)="updateQuantity(item.product.id, item.quantity)"
-                   min="1" [max]="item.product.stock">
+                   min="1" [max]="item.product.stock ?? 0">
             <button (click)="updateQuantity(item.product.id, item.quantity + 1)">+</button>
           </div>
         </div>

@@ -1,12 +1,14 @@
 package com.ecommerce.backend.controller;
 
+import com.ecommerce.backend.exception.ForbiddenException; // ForbiddenException import edildi
 import com.ecommerce.backend.exception.ResourceNotFoundException;
 import com.ecommerce.backend.model.Role;
 import com.ecommerce.backend.model.User;
-import com.ecommerce.backend.repository.UserRepository;
+import com.ecommerce.backend.payload.dto.UserDTO; // UserDTO import edildi
+// import com.ecommerce.backend.repository.UserRepository; // Direkt kullanılmıyorsa kaldırılabilir
 import com.ecommerce.backend.security.UserDetailsImpl;
 import com.ecommerce.backend.service.UserService;
-import io.swagger.v3.oas.annotations.Operation; // Swagger importları
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,15 +22,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/users") // API base path is /api/users due to server.servlet.context-path=/api
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-@Tag(name = "User", description = "User management APIs") // Swagger Tag
+@Tag(name = "User", description = "User management APIs")
 public class UserController {
     private final UserService userService;
-    private final UserRepository userRepository;
+    // private final UserRepository userRepository; // UserService üzerinden erişim tercih edilir.
 
     @Operation(summary = "Get all users", description = "Retrieves a list of all users (Admin only)")
     @ApiResponses(value = {
@@ -39,59 +42,81 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        // UserService'deki DTO döndüren metodu çağır
+        List<UserDTO> userDTOs = userService.getAllUsersAsDTO();
+        return ResponseEntity.ok(userDTOs);
     }
 
     @Operation(summary = "Get user by ID", description = "Retrieves a specific user by their ID")
-    @ApiResponses(value = { /* ... */ })
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved user"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<User> getUserById(@PathVariable Long id, Authentication authentication) {
-        // Kullanıcının kendi profilini veya adminin herhangi bir kullanıcıyı görmesine izin ver
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id, Authentication authentication) {
         UserDetailsImpl principal = (UserDetailsImpl) authentication.getPrincipal();
         boolean isAdmin = principal.getAuthorities().stream()
                             .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-        User requestedUser = userService.getUserById(id);
+        
+        User userEntity = userService.getUserById(id); // Get the User entity
 
-        if (isAdmin || principal.getId().equals(requestedUser.getId())) {
-            return ResponseEntity.ok(requestedUser);
+        if (isAdmin || principal.getId().equals(userEntity.getId())) {
+            return ResponseEntity.ok(UserDTO.fromEntity(userEntity)); // Convert entity to DTO for response
         } else {
-            // ForbiddenException fırlatılabilir veya ResponseEntity.status(HttpStatus.FORBIDDEN).build() dönülebilir.
-            // GlobalExceptionHandler bunu yakalayacaktır.
-            throw new com.ecommerce.backend.exception.ForbiddenException("You are not authorized to view this profile.");
+            throw new ForbiddenException("You are not authorized to view this profile.");
         }
     }
 
     @Operation(summary = "Get current user profile", description = "Retrieves the profile of the currently authenticated user")
-    @ApiResponses(value = { /* ... */ })
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved user profile"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<User> getCurrentUserProfile(Authentication authentication) {
+    public ResponseEntity<UserDTO> getCurrentUserProfile(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userService.getUserByEmail(userDetails.getEmail()) // getUserByEmail olarak değiştirildi
+        User userEntity = userService.getUserByEmail(userDetails.getEmail())
                         .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userDetails.getEmail()));
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(UserDTO.fromEntity(userEntity)); // Convert entity to DTO
     }
 
-    @Operation(summary = "Update user", description = "Updates an existing user's details")
-    @ApiResponses(value = { /* ... */ })
+    @Operation(summary = "Update user", description = "Updates an existing user's details. Admin can update any user, regular users can only update their own profile.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid user data"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponse(responseCode = "403", description = "Forbidden"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated() and (#id == authentication.principal.id or hasRole('ADMIN'))")
-    public ResponseEntity<User> updateUser(
+    public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
-            @RequestBody User userDetails,
+            @RequestBody User userDetails, // For simplicity, still taking User entity. Ideally, this should be a UserUpdateDTO.
             Authentication authentication) {
-        return ResponseEntity.ok(userService.updateUser(id, userDetails));
+        User updatedUser = userService.updateUser(id, userDetails);
+        return ResponseEntity.ok(UserDTO.fromEntity(updatedUser)); // Convert updated entity to DTO
     }
 
-    @Operation(summary = "Update user password", description = "Updates the password for a specific user")
-    @ApiResponses(value = { /* ... */ })
+    @Operation(summary = "Update user password", description = "Updates the password for the currently authenticated user.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Password updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid password data or current password mismatch"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}/password")
+    // Ensure only the authenticated user can change their own password, or an admin for any user (if business logic allows)
     @PreAuthorize("isAuthenticated() and #id == authentication.principal.id")
     public ResponseEntity<Void> updatePassword(
             @PathVariable Long id,
@@ -125,12 +150,12 @@ public class UserController {
     @Operation(summary = "Add role to user", description = "Adds a role to a user (Admin only)")
     @ApiResponses(value = { /* ... */ })
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping("/{userId}/roles") // @PutMapping'den @PostMapping'e değiştirildi, genellikle yeni bir ilişki eklemek için POST kullanılır.
+    @PostMapping("/{userId}/roles")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> addRoleToUser(
             @PathVariable Long userId,
-            @RequestBody Role role) { // RequestBody'den rol adı veya ID'si almak daha iyi olabilir. Şimdilik Role objesi alıyor.
-        userService.addRoleToUser(userId, role);
+            @RequestBody Role roleRequest) { // Role object might be simple, e.g., just containing the name
+        userService.addRoleToUser(userId, roleRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -141,19 +166,24 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removeRoleFromUser(
             @PathVariable Long userId,
-            @RequestBody Role role) { // RequestBody'den rol adı veya ID'si almak daha iyi olabilir.
-        userService.removeRoleFromUser(userId, role);
+            @RequestBody Role roleRequest) { // Role object might be simple
+        userService.removeRoleFromUser(userId, roleRequest);
         return ResponseEntity.ok().build();
     }
 
+    // --- Admin specific queries returning List<User> should also be converted to List<UserDTO> ---
+    // For brevity, I'm leaving them as they were, but they are prone to the same JSON serialization issue.
+    // Ideally, these should also call service methods that return List<UserDTO>.
 
     @Operation(summary = "Get users by role", description = "Retrieves users filtered by a specific role (Admin only)")
     @ApiResponses(value = { /* ... */ })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/role/{roleName}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getUsersByRole(@PathVariable String roleName) {
-        return ResponseEntity.ok(userService.getUsersByRole(roleName));
+    public ResponseEntity<List<UserDTO>> getUsersByRole(@PathVariable String roleName) {
+        List<User> users = userService.getUsersByRole(roleName);
+        List<UserDTO> userDTOs = users.stream().map(UserDTO::fromEntity).collect(Collectors.toList());
+        return ResponseEntity.ok(userDTOs);
     }
 
     @Operation(summary = "Get active users", description = "Retrieves a list of all active users (Admin only)")
@@ -161,8 +191,10 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/active")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getActiveUsers() {
-        return ResponseEntity.ok(userService.getActiveUsers());
+    public ResponseEntity<List<UserDTO>> getActiveUsers() {
+        List<User> users = userService.getActiveUsers();
+        List<UserDTO> userDTOs = users.stream().map(UserDTO::fromEntity).collect(Collectors.toList());
+        return ResponseEntity.ok(userDTOs);
     }
 
     @Operation(summary = "Get inactive users", description = "Retrieves users inactive since a threshold (Admin only)")
@@ -170,9 +202,11 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/inactive")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getInactiveUsers(
+    public ResponseEntity<List<UserDTO>> getInactiveUsers(
             @RequestParam LocalDateTime threshold) {
-        return ResponseEntity.ok(userService.getInactiveUsers(threshold));
+        List<User> users = userService.getInactiveUsers(threshold);
+        List<UserDTO> userDTOs = users.stream().map(UserDTO::fromEntity).collect(Collectors.toList());
+        return ResponseEntity.ok(userDTOs);
     }
 
     @Operation(summary = "Get users with no roles", description = "Retrieves users who have no roles assigned (Admin only)")
@@ -180,8 +214,10 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/no-roles")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getUsersWithNoRoles() {
-        return ResponseEntity.ok(userService.getUsersWithNoRoles());
+    public ResponseEntity<List<UserDTO>> getUsersWithNoRoles() {
+        List<User> users = userService.getUsersWithNoRoles();
+        List<UserDTO> userDTOs = users.stream().map(UserDTO::fromEntity).collect(Collectors.toList());
+        return ResponseEntity.ok(userDTOs);
     }
 
     @Operation(summary = "Get all admins", description = "Retrieves a list of all admin users (Admin only)")
@@ -189,7 +225,9 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/admins")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getAllAdmins() {
-        return ResponseEntity.ok(userService.getAllAdmins());
+    public ResponseEntity<List<UserDTO>> getAllAdmins() {
+        List<User> users = userService.getAllAdmins();
+        List<UserDTO> userDTOs = users.stream().map(UserDTO::fromEntity).collect(Collectors.toList());
+        return ResponseEntity.ok(userDTOs);
     }
 }

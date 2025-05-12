@@ -1,8 +1,8 @@
 package com.ecommerce.backend.controller;
 
 import com.ecommerce.backend.model.Product;
+import com.ecommerce.backend.payload.dto.ProductDTO; // ProductDTO import edildi
 import com.ecommerce.backend.service.ProductService;
-import com.ecommerce.backend.model.Category;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,157 +28,115 @@ public class ProductController {
 
     @Operation(
         summary = "Get all products",
-        description = "Retrieves a paginated list of all products"
+        description = "Retrieves a paginated list of all active products as DTOs"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved products"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated"),
-        @ApiResponse(responseCode = "403", description = "Forbidden - User not authorized")
-    })
     @GetMapping
-    public ResponseEntity<Page<Product>> getAllProducts(Pageable pageable) {
-        return ResponseEntity.ok(productService.getAllProducts(pageable));
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(Pageable pageable) {
+        // DTO döndüren servis metodunu çağır
+        return ResponseEntity.ok(productService.getAllProductsAsDTO(pageable));
     }
 
     @Operation(
         summary = "Get product by ID",
-        description = "Retrieves a specific product by its ID"
+        description = "Retrieves a specific product by its ID as DTO"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved product"),
-        @ApiResponse(responseCode = "404", description = "Product not found"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated")
-    })
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(
+    public ResponseEntity<ProductDTO> getProductById(
         @Parameter(description = "ID of the product to retrieve") @PathVariable Long id
     ) {
-        return ResponseEntity.ok(productService.getProductById(id));
+        return ResponseEntity.ok(productService.getProductDTOById(id)); // DTO döndüren metod
     }
 
     @Operation(
         summary = "Search products",
-        description = "Search products by query string with pagination"
+        description = "Search products by query string with pagination, returns DTOs"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved search results"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated")
-    })
     @GetMapping("/search")
-    public ResponseEntity<Page<Product>> searchProducts(
+    public ResponseEntity<Page<ProductDTO>> searchProducts(
         @Parameter(description = "Search query string") @RequestParam String query,
         Pageable pageable
     ) {
-        return ResponseEntity.ok(productService.searchProducts(query, pageable));
+        return ResponseEntity.ok(productService.searchProductsAsDTO(query, pageable));
     }
 
     @Operation(
         summary = "Get products by category",
-        description = "Retrieves products filtered by category ID with pagination"
+        description = "Retrieves products filtered by category ID with pagination, returns DTOs"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved products"),
-        @ApiResponse(responseCode = "404", description = "Category not found"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated")
-    })
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<Page<Product>> getProductsByCategory(
+    public ResponseEntity<Page<ProductDTO>> getProductsByCategory(
         @Parameter(description = "ID of the category to filter by") @PathVariable Long categoryId,
         Pageable pageable
     ) {
-        return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageable));
+        return ResponseEntity.ok(productService.getProductsByCategoryAsDTO(categoryId, pageable));
     }
-
+    
     @Operation(
         summary = "Get similar products",
-        description = "Retrieves products similar to the specified product"
+        description = "Retrieves products similar to the specified product as DTOs"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved similar products"),
-        @ApiResponse(responseCode = "404", description = "Product not found"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated")
-    })
     @GetMapping("/{id}/similar")
-    public ResponseEntity<List<Product>> getSimilarProducts(
+    public ResponseEntity<List<ProductDTO>> getSimilarProducts(
         @Parameter(description = "ID of the product to find similar items for") @PathVariable Long id,
         @Parameter(description = "Category ID for filtering similar products") @RequestParam Long categoryId,
         Pageable pageable
     ) {
-        return ResponseEntity.ok(productService.getSimilarProducts(id, categoryId, pageable));
+        return ResponseEntity.ok(productService.getSimilarProductsAsDTO(id, categoryId, pageable));
     }
 
     @Operation(
         summary = "Get top rated products",
-        description = "Retrieves products with ratings above the specified minimum"
+        description = "Retrieves products with ratings above the specified minimum as DTOs"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved top rated products"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated")
-    })
     @GetMapping("/top-rated")
-    public ResponseEntity<Page<Product>> getTopRatedProducts(
+    public ResponseEntity<Page<ProductDTO>> getTopRatedProducts(
         @Parameter(description = "Minimum rating threshold (default: 4.0)") 
         @RequestParam(defaultValue = "4.0") double minRating,
         Pageable pageable
     ) {
-        return ResponseEntity.ok(productService.getTopRatedProducts(minRating, pageable));
+        return ResponseEntity.ok(productService.getTopRatedProductsAsDTO(minRating, pageable));
     }
 
     @Operation(
         summary = "Create new product",
         description = "Creates a new product (Admin only)"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully created product"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated"),
-        @ApiResponse(responseCode = "403", description = "Forbidden - User not authorized as admin")
-    })
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Product> createProduct(
-        @Parameter(description = "Product object to create") @RequestBody Product product
+    public ResponseEntity<ProductDTO> createProduct( // ProductDTO döndür
+        @Parameter(description = "Product object to create") @RequestBody Product product // Şimdilik Product alıyor, ProductCreateDTO daha iyi olurdu
     ) {
-        return ResponseEntity.ok(productService.createProduct(product));
+        Product createdProduct = productService.createProduct(product);
+        return ResponseEntity.ok(ProductDTO.fromEntity(createdProduct)); // DTO'ya çevir
     }
 
     @Operation(
         summary = "Update product",
         description = "Updates an existing product (Admin only)"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully updated product"),
-        @ApiResponse(responseCode = "404", description = "Product not found"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated"),
-        @ApiResponse(responseCode = "403", description = "Forbidden - User not authorized as admin")
-    })
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Product> updateProduct(
+    public ResponseEntity<ProductDTO> updateProduct( // ProductDTO döndür
         @Parameter(description = "ID of the product to update") @PathVariable Long id,
-        @Parameter(description = "Updated product details") @RequestBody Product productDetails
+        @Parameter(description = "Updated product details") @RequestBody Product productDetails // Şimdilik Product alıyor, ProductUpdateDTO daha iyi olurdu
     ) {
-        return ResponseEntity.ok(productService.updateProduct(id, productDetails));
+        Product updatedProduct = productService.updateProduct(id, productDetails);
+        return ResponseEntity.ok(ProductDTO.fromEntity(updatedProduct)); // DTO'ya çevir
     }
 
     @Operation(
-        summary = "Delete product",
-        description = "Deletes a product (Admin only)"
+        summary = "Delete product (Deactivate)",
+        description = "Deactivates a product (Admin only)"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully deleted product"),
-        @ApiResponse(responseCode = "404", description = "Product not found"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated"),
-        @ApiResponse(responseCode = "403", description = "Forbidden - User not authorized as admin")
-    })
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteProduct(
-        @Parameter(description = "ID of the product to delete") @PathVariable Long id
+        @Parameter(description = "ID of the product to deactivate") @PathVariable Long id
     ) {
-        productService.deleteProduct(id);
+        productService.deleteProduct(id); // Bu metod ürünü pasif yapar
         return ResponseEntity.ok().build();
     }
 
@@ -186,37 +144,25 @@ public class ProductController {
         summary = "Update product stock",
         description = "Updates the stock quantity of a product (Admin only)"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully updated stock"),
-        @ApiResponse(responseCode = "404", description = "Product not found"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated"),
-        @ApiResponse(responseCode = "403", description = "Forbidden - User not authorized as admin")
-    })
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}/stock")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateStock(
         @Parameter(description = "ID of the product to update stock for") @PathVariable Long id,
-        @Parameter(description = "New stock quantity") @RequestParam int quantity
+        @Parameter(description = "Quantity to add (positive) or remove (negative)") @RequestParam int quantityChange
     ) {
-        productService.updateStock(id, quantity);
+        productService.updateStock(id, quantityChange);
         return ResponseEntity.ok().build();
     }
 
     @Operation(
         summary = "Get low stock products",
-        description = "Retrieves products with low stock levels (Admin only)"
+        description = "Retrieves products with low stock levels as DTOs (Admin only)"
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved low stock products"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized - User not authenticated"),
-        @ApiResponse(responseCode = "403", description = "Forbidden - User not authorized as admin")
-    })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/low-stock")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Product>> getLowStockProducts() {
-        return ResponseEntity.ok(productService.getLowStockProducts());
+    public ResponseEntity<List<ProductDTO>> getLowStockProducts() {
+        return ResponseEntity.ok(productService.getLowStockProductsAsDTO());
     }
 }
-

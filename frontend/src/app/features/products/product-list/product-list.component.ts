@@ -67,7 +67,7 @@ export class ProductListComponent implements OnInit {
 
   filterByCategory() {
     if (this.selectedCategory) {
-      this.productService.getProductsByCategory(this.selectedCategory, this.currentPage, this.pageSize)
+      this.productService.getProductsByCategory(Number(this.selectedCategory), this.currentPage, this.pageSize)
         .subscribe((response: PaginatedResponse) => {
           this.products = response.content;
           this.totalPages = response.totalPages;
