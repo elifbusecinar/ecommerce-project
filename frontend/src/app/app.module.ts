@@ -4,6 +4,7 @@ import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/
 import { ReactiveFormsModule } from '@angular/forms';
 // import { AppRoutingModule } from './app-routing.module';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { UserService } from './core/services/user.service';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
   providers: [
     provideHttpClient(
       withInterceptors([AuthInterceptor])
-    )
+    ),
+    UserService
   ]
 })
 export class AppModule { }

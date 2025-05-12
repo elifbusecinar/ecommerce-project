@@ -6,7 +6,6 @@ import com.ecommerce.backend.payload.response.JwtResponse;
 import com.ecommerce.backend.repository.*;
 import com.ecommerce.backend.security.JwtUtils;
 import com.ecommerce.backend.security.UserDetailsImpl;
-import com.ecommerce.backend.security.JwtUtils;
 import com.ecommerce.backend.service.UserService;
 import com.ecommerce.backend.dto.LoginRequest;
 import com.ecommerce.backend.dto.LoginResponse;
