@@ -4,6 +4,7 @@ import com.ecommerce.backend.model.User;
 import com.ecommerce.backend.model.Role;
 import com.ecommerce.backend.repository.UserRepository;
 import com.ecommerce.backend.exception.ResourceNotFoundException;
+import com.ecommerce.backend.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ecommerce.backend.model.Address;
 import com.ecommerce.backend.model.RoleName;
 import com.ecommerce.backend.repository.RoleRepository;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -66,6 +68,14 @@ public class UserService {
             user.setUsername(userDetails.getUsername());
         }
 
+        if (userDetails.getAddresses() != null) {
+            user.getAddresses().clear();
+            for (Address addressDetail : userDetails.getAddresses()) {
+                addressDetail.setUser(user);
+                user.getAddresses().add(addressDetail);
+            }
+        }
+
         return userRepository.save(user);
     }
 
@@ -89,6 +99,11 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public Optional<User> getUserByEmail(String email) { 
+        return userRepository.findByEmail(email);
+    }
+
+
     public void deactivateUser(Long id) {
         User user = getUserById(id);
         user.setActive(false);
@@ -101,20 +116,32 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void addRoleToUser(Long userId, Role role) {
+public void addRoleToUser(Long userId, Role role) {
         User user = getUserById(userId);
-        user.getRoles().add(role);
+        Role managedRole = roleRepository.findByName(role.getName())
+            .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + role.getName()));
+        user.getRoles().add(managedRole);
         userRepository.save(user);
     }
 
     public void removeRoleFromUser(Long userId, Role role) {
         User user = getUserById(userId);
-        user.getRoles().remove(role);
+        Role managedRole = roleRepository.findByName(role.getName())
+            .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + role.getName()));
+        user.getRoles().remove(managedRole);
         userRepository.save(user);
     }
 
-    public List<User> getUsersByRole(String roleName) {
-        return userRepository.findByRole(roleName);
+    public List<User> getUsersByRole(String roleNameString) { 
+        RoleName roleName;
+        try {
+            roleName = RoleName.valueOf(roleNameString.toUpperCase().trim()); // Rol adını enum'a çevir ve geçerliliğini kontrol et
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid role name: " + roleNameString); // Geçersiz rol adı için hata fırlat
+        }
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found in database: " + roleNameString)); // Rolü DB'den al
+        return userRepository.findByRole(role.getName().name());
     }
 
     public List<User> getActiveUsers() {
@@ -137,5 +164,9 @@ public class UserService {
         User user = getUserById(id);
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
+    }
+
+        public List<User> getAllUsers() { 
+        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id")); // ID'ye göre artan sırada sırala
     }
 } 

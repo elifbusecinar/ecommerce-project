@@ -1,1 +1,63 @@
-<p>manage-users works!</p>
+<div class="manage-users-container">
+  <header class="page-header">
+    <h1>User Management</h1>
+    </header>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>Loading users...</p>
+    </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && users.length > 0" class="users-table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Roles</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.firstName }}</td>
+          <td>{{ user.lastName }}</td>
+          <td>
+            <span *ngFor="let role of user.roles; let last = last">
+              {{ role.name }}{{ !last ? ', ' : '' }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" [class.active]="user.active" [class.inactive]="!user.active">
+              {{ user.active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button class="btn btn-sm btn-info" [routerLink]="['/admin/users/edit', user.id]">Edit</button>
+            <button
+              class="btn btn-sm"
+              [class.btn-warning]="user.active"
+              [class.btn-success]="!user.active"
+              (click)="toggleUserStatus(user)">
+              {{ user.active ? 'Deactivate' : 'Activate' }}
+            </button>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && users.length === 0" class="no-users-message">
+    <p>No users found.</p>
+  </div>
+</div>
