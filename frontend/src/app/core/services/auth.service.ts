@@ -82,6 +82,11 @@ export class AuthService {
     const user = this.currentUserSubject.value;
     if (!user || !user.roles) return false;
     const targetRoleName = role.startsWith('ROLE_') ? role.toUpperCase() : `ROLE_${role.toUpperCase()}`;
-    return user.roles.some(r => r.name.toUpperCase() === targetRoleName);
+    // Roller string array ise
+    if (typeof (user.roles as unknown as any[])[0] === 'string') {
+      return (user.roles as unknown as string[]).some(r => r.toUpperCase() === targetRoleName);
+    }
+    // Roller obje array ise
+    return (user.roles as unknown as Role[]).some(r => r.name.toUpperCase() === targetRoleName);
   }
 } 
