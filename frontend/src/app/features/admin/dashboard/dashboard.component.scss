@@ -1,0 +1,87 @@
+.admin-dashboard-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f4f7f6; // Hafif bir arka plan rengi
+  min-height: calc(100vh - 70px - 40px); // Header ve padding düşüldükten sonra kalan yükseklik
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+  h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1em;
+    color: #666;
+  }
+}
+
+.dashboard-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); // Kartların duyarlı dağılımı
+  gap: 20px; // Kartlar arası boşluk
+}
+
+.nav-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 25px;
+  text-decoration: none;
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex; // İkon ve metni yan yana getirmek için
+  align-items: center; // Dikeyde ortalamak için
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .nav-card-icon {
+    font-size: 2.5em; // İkon boyutu
+    margin-right: 20px;
+    color: #007bff; // İkon rengi
+    flex-shrink: 0; // İkonun küçülmesini engelle
+  }
+
+  .nav-card-body {
+    h2 {
+      font-size: 1.4em;
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #0056b3; // Başlık rengi
+    }
+
+    p {
+      font-size: 0.95em;
+      color: #555;
+      line-height: 1.5;
+    }
+  }
+}
+
+// FontAwesome ikonları için genel stil (eğer projenizde yoksa)
+// Bu stilleri global bir SCSS dosyasına taşımak daha iyi olabilir.
+.fas {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+// Örnek FontAwesome ikon sınıfları (projenizde FontAwesome kurulu olmalı)
+.fa-users-cog::before { content: "\f509"; font-family: "Font Awesome 5 Free"; font-weight: 900; }
+.fa-box-open::before { content: "\f49e"; font-family: "Font Awesome 5 Free"; font-weight: 900; }
+.fa-receipt::before { content: "\f543"; font-family: "Font Awesome 5 Free"; font-weight: 900; }
+.fa-chart-line::before { content: "\f201"; font-family: "Font Awesome 5 Free"; font-weight: 900; }

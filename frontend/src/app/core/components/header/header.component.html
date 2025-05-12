@@ -6,7 +6,7 @@
 
     <nav class="nav-menu">
       <a routerLink="/products" routerLinkActive="active" class="nav-link">Products</a>
-      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="active" class="nav-link">Admin Panel</a>
+      <a *ngIf="isLoggedIn && isAdmin" routerLink="/admin" routerLinkActive="active" class="nav-link">Admin Panel</a>
     </nav>
 
     <div class="header-actions">
@@ -21,8 +21,9 @@
       </div>
 
       <div class="user-menu" *ngIf="isLoggedIn">
-        <a routerLink="/profile" class="nav-link user-name-link">
-          <i class="fas fa-user-circle" style="margin-right: 5px;"></i> <span>{{ userName }}</span>
+        <a routerLink="/profile" class="nav-link user-name-link" title="View Profile">
+          <i class="fas fa-user-circle" style="margin-right: 5px;"></i>
+          <span>{{ userName }}</span>
         </a>
         <button class="btn-logout" (click)="logout()">Logout</button>
       </div>

@@ -1,11 +1,11 @@
 <div class="manage-users-container">
   <header class="page-header">
     <h1>User Management</h1>
-    </header>
+  </header>
 
   <div *ngIf="isLoading" class="loading-indicator">
     <p>Loading users...</p>
-    </div>
+  </div>
 
   <div *ngIf="errorMessage" class="error-message">
     <p>{{ errorMessage }}</p>
@@ -33,8 +33,8 @@
           <td>{{ user.firstName }}</td>
           <td>{{ user.lastName }}</td>
           <td>
-            <span *ngFor="let role of user.roles; let last = last">
-              {{ role.name }}{{ !last ? ', ' : '' }}
+            <span *ngFor="let roleName of user.roles; let last = last">
+              {{ roleName.replace('ROLE_', '') }}{{ !last ? ', ' : '' }}
             </span>
           </td>
           <td>
@@ -51,7 +51,7 @@
               (click)="toggleUserStatus(user)">
               {{ user.active ? 'Deactivate' : 'Activate' }}
             </button>
-            </td>
+          </td>
         </tr>
       </tbody>
     </table>

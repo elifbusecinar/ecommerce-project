@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router'; // Import Router
 import { CartService } from '../../services/cart.service';
 import { AuthService, User } from '../../services/auth.service'; // Import User type
+import { Subscription } from 'rxjs'; // Import Subscription for cleanup
 
 @Component({
   selector: 'app-header',
@@ -15,32 +16,49 @@ export class HeaderComponent implements OnInit {
   totalItems = 0;
   isLoggedIn = false;
   userName: string | null = null;
-  isAdmin = false; // New property to check if user is admin
+  isAdmin = false;
+
+  private cartSubscription: Subscription | undefined;
+  private userSubscription: Subscription | undefined;
 
   constructor(
     private readonly cartService: CartService,
     private readonly authService: AuthService,
-    private readonly router: Router // Inject Router
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
-    this.cartService.getCart().subscribe(items => {
-      // Assuming getCart returns items and getTotalItems calculates from these or another source
-      this.totalItems = this.cartService.getTotalItems();
+    // Subscribe to cart items to update totalItems
+    this.cartSubscription = this.cartService.getCart().subscribe(items => {
+      // Calculate total items based on the quantity of each item in the cart
+      this.totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
     });
 
-    this.authService.currentUser$.subscribe(user => {
+    // Subscribe to current user changes
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
       this.isLoggedIn = !!user;
       if (user) {
-        // Assuming user object has a 'firstName' or similar property.
-        // If not, adjust to use 'username' or 'email' as before.
+        // Use firstName if available, otherwise fallback to email or a generic 'User'
         this.userName = user.firstName || user.email || 'User';
         this.isAdmin = this.authService.hasRole('ADMIN'); // Check if user is admin
+        // For debugging:
+        // console.log('Current user in header:', user);
+        // console.log('Is Admin in header:', this.isAdmin);
       } else {
         this.userName = null;
         this.isAdmin = false;
       }
     });
+  }
+
+  ngOnDestroy() {
+    // Unsubscribe to prevent memory leaks
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   logout() {

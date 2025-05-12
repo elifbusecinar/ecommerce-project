@@ -56,13 +56,13 @@ export class ProductDetailComponent implements OnInit {
       .subscribe(product => {
         if (product) {
           this.product = product;
-          this.loadSimilarProducts(product.category, product.id);
+          this.loadSimilarProducts(product.categoryId ?? 0, product.id, 0, 5);
         }
       });
   }
 
-  private loadSimilarProducts(category: string, currentProductId: number) {
-    this.productService.getSimilarProducts(category, currentProductId)
+  private loadSimilarProducts(categoryId: number, currentProductId: number, page: number, size: number) {
+    this.productService.getSimilarProducts(categoryId, currentProductId, page, size)
       .subscribe(products => {
         this.similarProducts = products;
       });
@@ -126,7 +126,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   increaseQuantity() {
-    if (this.product && this.quantity < this.product.stock) {
+    if (this.product && this.product.stock !== undefined && this.quantity < this.product.stock) {
       this.quantity++;
     }
   }
