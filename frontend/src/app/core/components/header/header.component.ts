@@ -36,14 +36,14 @@ export class HeaderComponent implements OnInit {
 
     // Subscribe to current user changes
     this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      console.log('Current user in header:', user);
       this.isLoggedIn = !!user;
       if (user) {
         // Use firstName if available, otherwise fallback to email or a generic 'User'
         this.userName = user.firstName || user.email || 'User';
         this.isAdmin = this.authService.hasRole('ADMIN'); // Check if user is admin
-        // For debugging:
-        // console.log('Current user in header:', user);
-        // console.log('Is Admin in header:', this.isAdmin);
+        console.log('Is Admin in header:', this.isAdmin);
+        console.log('User roles:', user.roles);
       } else {
         this.userName = null;
         this.isAdmin = false;
