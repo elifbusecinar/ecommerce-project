@@ -1,6 +1,7 @@
 package com.ecommerce.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Category name cannot be blank") // Eklenecek
     @Column(nullable = false, unique = true)
     private String name;
 

@@ -29,9 +29,6 @@ export class ProductService {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
 
-  getCategories(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/categories`);
-  }
 
   searchProducts(query: string, page: number, size: number): Observable<PaginatedResponse> {
     const params = new HttpParams()
@@ -41,7 +38,7 @@ export class ProductService {
     return this.http.get<PaginatedResponse>(`${this.apiUrl}/search`, { params });
   }
 
-  getProductsByCategory(categoryId: string, page: number, size: number): Observable<PaginatedResponse> {
+  getProductsByCategory(categoryId: number, page: number, size: number): Observable<PaginatedResponse> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -60,4 +57,4 @@ export class ProductService {
   addReview(productId: number, review: { rating: number; comment: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/${productId}/reviews`, review);
   }
-} 
+}

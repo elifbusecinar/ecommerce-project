@@ -27,9 +27,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         
+        String path = request.getServletPath();
+        log.info("Processing request for path: {}", path);
+        
         try {
             // Get JWT token from request
             String jwt = getJwtFromRequest(request);
+            log.info("JWT token present: {}", jwt != null);
 
             // If token is valid, set authentication
             if (jwt != null && jwtUtils.validateToken(jwt)) {
@@ -41,6 +45,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("Authentication set for user: {}", username);
             }
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e.getMessage());
@@ -51,6 +56,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
+        log.info("Authorization header: {}", bearerToken);
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
@@ -60,11 +66,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return path.startsWith("/api/auth/") ||
+        boolean shouldNotFilter = path.equals("/categories") ||
+               path.startsWith("/categories/") ||
+               path.equals("/api/categories") ||
+               path.startsWith("/api/categories/") ||
+               path.startsWith("/api/auth/") ||
                path.startsWith("/v3/api-docs") ||
                path.startsWith("/swagger-ui/") ||
                path.equals("/swagger-ui.html") ||
                path.startsWith("/webjars/") ||
                path.startsWith("/swagger-resources");
+        log.info("Path: {}, Should not filter: {}", path, shouldNotFilter);
+        return shouldNotFilter;
     }
 } 

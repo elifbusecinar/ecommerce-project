@@ -6,8 +6,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
+@Slf4j
 public class CorsConfig {
 
     @Bean
@@ -16,7 +18,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         // Allow all origins for development
-        config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedOriginPattern("*");
         
         // Allow all HTTP methods
         config.addAllowedMethod("*");
@@ -26,6 +28,15 @@ public class CorsConfig {
         
         // Allow credentials
         config.setAllowCredentials(true);
+        
+        // Expose headers
+        config.addExposedHeader("Authorization");
+        config.addExposedHeader("Content-Type");
+        
+        // Set max age
+        config.setMaxAge(3600L);
+        
+        log.info("CORS Configuration: {}", config);
         
         // Apply this configuration to all paths
         source.registerCorsConfiguration("/**", config);
