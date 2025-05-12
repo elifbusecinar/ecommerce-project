@@ -71,7 +71,7 @@ export class ProductService {
   }
 
   // --- Admin işlemleri ---
-  createProduct(productData: FormData): Observable<Product> { // FormData veya Product DTO alabilir
+  createProduct(productData: Partial<Product>): Observable<Product> { // Artık Product veya Partial<Product> alıyor
     return this.http.post<Product>(this.apiUrl, productData);
   }
 
@@ -85,5 +85,12 @@ export class ProductService {
   
   addReview(productId: number, review: { rating: number; comment: string }): Observable<Review> {
     return this.http.post<Review>(`${this.apiUrl}/${productId}/reviews`, review);
+  }
+
+  addProduct(product: Product | FormData): Observable<Product> {
+    if (product instanceof FormData) {
+      return this.http.post<Product>(this.apiUrl, product);
+    }
+    return this.http.post<Product>(this.apiUrl, product);
   }
 }

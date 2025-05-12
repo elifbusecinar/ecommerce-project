@@ -7,6 +7,8 @@ import { ManageProductsComponent } from './manage-products/manage-products.compo
 import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { OrderManagementComponent } from './order-management/order-management.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
+import { NewProductComponent } from './manage-products/new-product.component';
+import { EditProductComponent } from './manage-products/edit-product.component';
 
 const routes: Routes = [
   {
@@ -17,6 +19,8 @@ const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'products', component: ManageProductsComponent },
+      { path: 'products/new', component: NewProductComponent },
+      { path: 'products/edit/:id', component: EditProductComponent },
       { path: 'users', component: ManageUsersComponent },
       { path: 'orders', component: OrderManagementComponent },
       { path: 'analytics', component: AnalyticsComponent }

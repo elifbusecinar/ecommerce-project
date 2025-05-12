@@ -11,7 +11,8 @@
       <button (click)="search()" class="search-button">Search</button>
     </div>
 
-    <div class="category-filter">
+    <div class="filter-section category-filter">
+      <h3>Category</h3>
       <select [(ngModel)]="selectedCategory" (change)="filterByCategory()" class="category-select">
         <option value="">All Categories</option>
         <option *ngFor="let category of categories" [value]="category.id">
@@ -20,7 +21,8 @@
       </select>
     </div>
 
-    <div class="sort-options">
+    <div class="filter-section sort-options">
+      <h3>Sort By</h3>
       <select [(ngModel)]="sortOption" (change)="sort()" class="sort-select">
         <option value="name">Name</option>
         <option value="price-asc">Price: Low to High</option>
@@ -30,39 +32,48 @@
     </div>
   </div>
 
-  <div class="products-grid">
-    <div *ngFor="let product of products" class="product-card">
-      <img [src]="product.images?.[0] || product.imageUrl" [alt]="product.name" class="product-image" />
-      <div class="product-info">
-        <h3 class="product-name">{{ product.name }}</h3>
-        <p class="product-price">${{ product.price.toFixed(2) }}</p>
-        <div class="product-rating">
-          <span *ngFor="let star of [1,2,3,4,5]" class="star"
-            [class.filled]="star <= (product.rating ?? 0)">★</span>
-          <span class="rating-count">({{ product.reviewCount ?? 0 }})</span>
+  <div class="products-grid-container">
+    <div *ngIf="products.length > 0; else noResults" class="products-grid">
+      <div *ngFor="let product of products" class="product-card">
+        <div class="product-image-wrapper">
+          <img [src]="product.images?.[0] || product.imageUrl || 'assets/images/placeholder.png'" [alt]="product.name" class="product-image" />
         </div>
-        <button (click)="addToCart(product)" class="add-to-cart-btn">
-          Add to Cart
-        </button>
+        <div class="product-info">
+          <h3 class="product-name" [title]="product.name">{{ product.name }}</h3>
+          <p class="product-price">${{ product.price.toFixed(2) }}</p>
+          <div class="product-rating" *ngIf="product.rating">
+            <span *ngFor="let star of [1,2,3,4,5]" class="star"
+                  [class.filled]="star <= (product.rating ?? 0)">★</span>
+            <span class="rating-count">({{ product.reviewCount ?? 0 }})</span>
+          </div>
+          <button (click)="addToCart(product)" class="add-to-cart-btn" [disabled]="(product.stockQuantity ?? product.stock ?? 0) === 0">
+            {{ (product.stockQuantity ?? product.stock ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart' }}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+    <ng-template #noResults>
+      <div class="no-results">
+        <p>No products found matching your criteria.</p>
+      </div>
+    </ng-template>
 
-  <div class="pagination">
-    <button
-      [disabled]="currentPage === 1"
-      (click)="changePage(currentPage - 1)"
-      class="pagination-btn"
-    >
-      Previous
-    </button>
-    <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
-    <button
-      [disabled]="currentPage === totalPages"
-      (click)="changePage(currentPage + 1)"
-      class="pagination-btn"
-    >
-      Next
-    </button>
+    <div class="pagination" *ngIf="products.length > 0 && totalPages > 1">
+      <button
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)"
+        class="pagination-btn"
+      >
+        Previous
+      </button>
+      <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button
+        [disabled]="currentPage === totalPages"
+        (click)="changePage(currentPage + 1)"
+        class="pagination-btn"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </div>

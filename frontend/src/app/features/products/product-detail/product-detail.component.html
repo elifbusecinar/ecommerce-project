@@ -1,133 +1,121 @@
 <div class="product-detail-container">
-  <!-- Loading State -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>Loading product details...</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="error" class="error-state">
     <p>{{ error }}</p>
-    <button (click)="reloadProduct()">Try Again</button>
+    <button (click)="reloadProduct()" class="btn btn-primary">Try Again</button>
   </div>
 
-  <!-- Product Content -->
-  <div *ngIf="!loading && !error && product" class="product-content">
-    <!-- Product Main Section -->
-    <div class="product-main">
-      <!-- Product Images -->
-      <div class="product-images">
-        <div class="main-image">
-          <img [src]="product.images?.[selectedImageIndex] || product.imageUrl" [alt]="product.name">
-        </div>
-        <div class="thumbnail-list">
-          <div *ngFor="let image of product.images || []; let i = index"
-               class="thumbnail"
-               [class.active]="i === selectedImageIndex"
-               (click)="selectImage(i)">
-            <img [src]="image" [alt]="product.name + ' thumbnail ' + (i + 1)">
-          </div>
+  <div *ngIf="!loading && !error && product" class="product-content-grid">
+    <section class="product-images-section">
+      <div class="main-image-container">
+        <img [src]="product.images?.[selectedImageIndex] || product.imageUrl || 'assets/images/placeholder.png'" [alt]="product.name" class="main-image">
+      </div>
+      <div class="thumbnail-list" *ngIf="product.images && product.images.length > 1">
+        <div *ngFor="let image of product.images; let i = index"
+             class="thumbnail-item"
+             [class.active]="i === selectedImageIndex"
+             (click)="selectImage(i)"
+             [style.backgroundImage]="'url(' + (image || 'assets/images/placeholder.png') + ')'"
+             role="button" [attr.aria-label]="product.name + ' thumbnail ' + (i + 1)">
         </div>
       </div>
+    </section>
 
-      <!-- Product Info -->
-      <div class="product-info">
-        <h1>{{ product.name }}</h1>
-        <div class="rating">
+    <section class="product-info-section">
+      <h1 class="product-title">{{ product.name }}</h1>
+
+      <div class="product-meta">
+        <div class="rating-section" *ngIf="product.rating">
           <div class="stars">
             <span *ngFor="let star of getRatingStars(product.rating ?? 0)"
                   class="star"
                   [class.filled]="star === 1">★</span>
           </div>
-          <span class="rating-value">{{ product.rating }}</span>
-          <span class="review-count">({{ product.reviews?.length || 0 }} reviews)</span>
+          <span class="rating-value">{{ product.rating?.toFixed(1) }}</span>
+          <a href="#reviews" class="review-count">({{ product.reviews?.length || 0 }} reviews)</a>
         </div>
-        <div class="price">${{ product.price.toFixed(2) }}</div>
-        <p class="description">{{ product.description }}</p>
-        <div class="add-to-cart">
-          <div class="quantity">
-            <button (click)="decreaseQuantity()">-</button>
-            <input type="number" [(ngModel)]="quantity" min="1" [max]="product.stock ?? 0">
-            <button (click)="increaseQuantity()">+</button>
-          </div>
-          <button class="add-to-cart-btn"
-                  [disabled]="(product.stock ?? 0) === 0"
-                  (click)="addToCart()">
-            {{ (product.stock ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart' }}
-          </button>
+        <div class="product-category" *ngIf="product.categoryName">
+          Category: <a [routerLink]="['/products']" [queryParams]="{category: product.categoryId}">{{ product.categoryName }}</a>
         </div>
-        <p class="stock" [class.low-stock]="(product.stock ?? 0) <= 5">
-          {{ (product.stock ?? 0) > 0 ? (product.stock ?? 0) + ' items in stock' : 'Out of stock' }}
-        </p>
       </div>
-    </div>
 
-    <!-- Product Details Tabs -->
-    <div class="product-details">
-      <div class="tabs">
-        <div class="tab active">Specifications</div>
-      </div>
-      <div class="specifications">
-        <table>
-          <tr *ngFor="let spec of product.specifications || []">
-            <td class="spec-name">{{ spec.name }}</td>
-            <td class="spec-value">{{ spec.value }}</td>
-          </tr>
-        </table>
-      </div>
-    </div>
+      <p class="product-price">${{ product.price.toFixed(2) }}</p>
 
-    <!-- Reviews Section -->
-    <div class="reviews">
-      <div class="add-review">
-        <h3>Write a Review</h3>
-        <div class="rating-input">
-          <span>Rating:</span>
-          <div class="stars">
-            <span *ngFor="let star of [1,2,3,4,5]"
-                  class="star"
-                  [class.filled]="star <= newReview.rating"
-                  (click)="newReview.rating = star">★</span>
+      <div class="stock-status" [ngClass]="{'in-stock': (product.stockQuantity ?? product.stock ?? 0) > 0, 'low-stock': (product.stockQuantity ?? product.stock ?? 0) <= 5 && (product.stockQuantity ?? product.stock ?? 0) > 0, 'out-of-stock': (product.stockQuantity ?? product.stock ?? 0) === 0}">
+        <span *ngIf="(product.stockQuantity ?? product.stock ?? 0) > 5">In Stock</span>
+        <span *ngIf="(product.stockQuantity ?? product.stock ?? 0) <= 5 && (product.stockQuantity ?? product.stock ?? 0) > 0">Low Stock ({{ product.stockQuantity ?? product.stock }}) left)</span>
+        <span *ngIf="(product.stockQuantity ?? product.stock ?? 0) === 0">Out of Stock</span>
+      </div>
+
+      <p class="product-description" *ngIf="product.description">{{ product.description }}</p>
+
+      <div class="actions-container">
+        <div class="quantity-selector">
+          <label for="quantity">Quantity:</label>
+          <div class="quantity-controls">
+            <button (click)="decreaseQuantity()" class="quantity-btn" aria-label="Decrease quantity">-</button>
+            <input id="quantity" type="number" [(ngModel)]="quantity" min="1" [max]="product.stockQuantity ?? product.stock ?? 1" class="quantity-input" aria-label="Product quantity">
+            <button (click)="increaseQuantity()" class="quantity-btn" aria-label="Increase quantity">+</button>
           </div>
         </div>
-        <textarea [(ngModel)]="newReview.comment"
-                  placeholder="Write your review here..."
-                  [disabled]="submittingReview"></textarea>
-        <button (click)="submitReview()"
-                [disabled]="!newReview.comment.trim() || submittingReview">
-          {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
+        <button class="add-to-cart-button"
+                [disabled]="(product.stockQuantity ?? product.stock ?? 0) === 0 || quantity > (product.stockQuantity ?? product.stock ?? 0)"
+                (click)="addToCart()">
+          <i class="fas fa-shopping-cart"></i>
+          {{ (product.stockQuantity ?? product.stock ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart' }}
         </button>
       </div>
+    </section>
 
-      <div class="review-list">
-        <div *ngFor="let review of product.reviews || []" class="review">
-          <div class="review-header">
-            <span class="user">{{ review.user }}</span>
-            <span class="date">{{ review.date | date }}</span>
+    <section class="product-details-tabs-section">
+      <div class="tabs-nav">
+        <button class="tab-button active" data-tab="specifications">Specifications</button>
+        <button class="tab-button" data-tab="reviews" id="reviews">Reviews</button>
+        </div>
+
+      <div class="tab-content specifications active" id="specifications-content">
+        <h2 class="tab-content-title">Product Specifications</h2>
+        <table class="specifications-table" *ngIf="product.specifications && product.specifications.length > 0">
+          <tbody>
+            <tr *ngFor="let spec of product.specifications">
+              <td class="spec-name">{{ spec.name }}</td>
+              <td class="spec-value">{{ spec.value }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="!product.specifications || product.specifications.length === 0" class="no-specs">No specifications available for this product.</p>
+      </div>
+
+      <div class="tab-content reviews" id="reviews-content">
+        <h2 class="tab-content-title">Customer Reviews</h2>
+        <div class="add-review-section">
+          <h3>Write a Review</h3>
+          <div class="rating-input-group">
+            <label>Your Rating:</label>
+            <div class="stars-input">
+              <span *ngFor="let star of [1,2,3,4,5]"
+                    class="star-selectable"
+                    [class.filled]="star <= newReview.rating"
+                    (click)="newReview.rating = star"
+                    role="button" [attr.aria-label]="'Rate ' + star + ' star'">★</span>
+            </div>
           </div>
-          <div class="stars">
-            <span *ngFor="let star of getRatingStars(review.rating)"
-                  class="star"
-                  [class.filled]="star === 1">★</span>
-          </div>
-          <p class="comment">{{ review.comment }}</p>
+          <textarea [(ngModel)]="newReview.comment"
+                    placeholder="Share your thoughts about this product..."
+                    class="review-textarea"
+                    [disabled]="submittingReview"
+                    rows="4"></textarea>
+          <button (click)="submitReview()"
+                  class="submit-review-button"
+                  [disabled]="!newReview.comment.trim() || submittingReview">
+            {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
+          </button>
         </div>
       </div>
-    </div>
-
-    <!-- Similar Products -->
-    <div class="similar-products" *ngIf="similarProducts.length > 0">
-      <h2>Similar Products</h2>
-      <div class="product-grid">
-        <div *ngFor="let similarProduct of similarProducts" class="product-card">
-          <img [src]="similarProduct.images?.[0] || similarProduct.imageUrl" [alt]="similarProduct.name">
-          <div class="product-info">
-            <h3>{{ similarProduct.name }}</h3>
-            <div class="price">${{ similarProduct.price.toFixed(2) }}</div>
-            <button [routerLink]="['/products', similarProduct.id]">View Details</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
   </div>
 </div>
