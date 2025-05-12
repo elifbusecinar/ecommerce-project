@@ -46,6 +46,7 @@ public class DataLoader implements CommandLineRunner {
         if (userRepository.findByUsername("admin@example.com").isEmpty()) {
             User adminUser = User.builder()
                     .username("admin@example.com")
+                    .email("admin@example.com")
                     .firstName("Admin")
                     .lastName("User")
                     .password(passwordEncoder.encode("admin123"))  // Şifreyi encode ediyoruz
