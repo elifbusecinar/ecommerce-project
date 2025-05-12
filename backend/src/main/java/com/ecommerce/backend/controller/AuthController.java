@@ -83,9 +83,9 @@ public class AuthController {
         roles.add(userRole);
 
         user.setRoles(roles);
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        return ResponseEntity.ok("User registered successfully!");
+        return ResponseEntity.ok(savedUser);
     }
 
     @Operation(
@@ -113,7 +113,18 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        return ResponseEntity.ok(new LoginResponse(jwt));
+        List<String> roles = userDetails.getAuthorities().stream()
+            .map(item -> item.getAuthority())
+            .collect(Collectors.toList());
+        
+
+        return ResponseEntity.ok(new LoginResponse(
+            jwt,
+            userDetails.getId(),
+            userDetails.getUsername(),
+            userDetails.getEmail(),
+            roles
+        ));
     }
 
     @Operation(

@@ -59,19 +59,33 @@ export class RegisterComponent {
       const { confirmPassword, ...userData } = this.registerForm.value;
 
       this.authService.register(userData).subscribe({
-        next: () => {
+        next: (registeredUser) => {
           this.router.navigate(['/login']); // Başarılı kayıt sonrası login sayfasına yönlendir
         },
-        error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = error?.error?.message || error?.error || 'An error occurred during registration';
-        },
-        complete: () => {
-            this.isLoading = false;
-        }
-      });
-    } else {
-        this.registerForm.markAllAsTouched();
-    }
-  }
+        error: (errorResponse) => {
+                this.isLoading = false;
+                // Backend'den gelen hata mesajını doğru şekilde al
+                if (errorResponse.error && typeof errorResponse.error === 'string') {
+                  // Eğer backend doğrudan string bir hata mesajı yolluyorsa
+                  this.errorMessage = errorResponse.error;
+                } else if (errorResponse.error && typeof errorResponse.error === 'object' && errorResponse.error.message) {
+                  // Eğer backend { message: "hata" } gibi bir obje yolluyorsa
+                  this.errorMessage = errorResponse.error.message;
+                } else if (errorResponse.message) {
+                  // Genel bir hata mesajı varsa
+                  this.errorMessage = errorResponse.message;
+                } else {
+                  // Hiçbiri yoksa varsayılan bir mesaj
+                  this.errorMessage = 'An unexpected error occurred during registration.';
+                }
+                console.error('Registration Error Full Response:', errorResponse); // Hatanın tamamını konsola yazdır
+              },
+              complete: () => {
+                this.isLoading = false;
+              }
+            });
+          } else {
+            this.registerForm.markAllAsTouched();
+          }
+      }
 }
