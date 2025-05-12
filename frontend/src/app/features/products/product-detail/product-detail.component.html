@@ -18,10 +18,10 @@
       <!-- Product Images -->
       <div class="product-images">
         <div class="main-image">
-          <img [src]="product.images[selectedImageIndex]" [alt]="product.name">
+          <img [src]="product.images?.[selectedImageIndex] || product.imageUrl" [alt]="product.name">
         </div>
         <div class="thumbnail-list">
-          <div *ngFor="let image of product.images; let i = index"
+          <div *ngFor="let image of product.images || []; let i = index"
                class="thumbnail"
                [class.active]="i === selectedImageIndex"
                (click)="selectImage(i)">
@@ -35,29 +35,29 @@
         <h1>{{ product.name }}</h1>
         <div class="rating">
           <div class="stars">
-            <span *ngFor="let star of getRatingStars(product.rating)"
+            <span *ngFor="let star of getRatingStars(product.rating ?? 0)"
                   class="star"
                   [class.filled]="star === 1">★</span>
           </div>
           <span class="rating-value">{{ product.rating }}</span>
-          <span class="review-count">({{ product.reviews.length }} reviews)</span>
+          <span class="review-count">({{ product.reviews?.length || 0 }} reviews)</span>
         </div>
         <div class="price">${{ product.price.toFixed(2) }}</div>
         <p class="description">{{ product.description }}</p>
         <div class="add-to-cart">
           <div class="quantity">
             <button (click)="decreaseQuantity()">-</button>
-            <input type="number" [(ngModel)]="quantity" min="1" [max]="product.stock">
+            <input type="number" [(ngModel)]="quantity" min="1" [max]="product.stock ?? 0">
             <button (click)="increaseQuantity()">+</button>
           </div>
           <button class="add-to-cart-btn"
-                  [disabled]="product.stock === 0"
+                  [disabled]="(product.stock ?? 0) === 0"
                   (click)="addToCart()">
-            {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+            {{ (product.stock ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart' }}
           </button>
         </div>
-        <p class="stock" [class.low-stock]="product.stock <= 5">
-          {{ product.stock > 0 ? product.stock + ' items in stock' : 'Out of stock' }}
+        <p class="stock" [class.low-stock]="(product.stock ?? 0) <= 5">
+          {{ (product.stock ?? 0) > 0 ? (product.stock ?? 0) + ' items in stock' : 'Out of stock' }}
         </p>
       </div>
     </div>
@@ -69,7 +69,7 @@
       </div>
       <div class="specifications">
         <table>
-          <tr *ngFor="let spec of product.specifications">
+          <tr *ngFor="let spec of product.specifications || []">
             <td class="spec-name">{{ spec.name }}</td>
             <td class="spec-value">{{ spec.value }}</td>
           </tr>
@@ -100,7 +100,7 @@
       </div>
 
       <div class="review-list">
-        <div *ngFor="let review of product.reviews" class="review">
+        <div *ngFor="let review of product.reviews || []" class="review">
           <div class="review-header">
             <span class="user">{{ review.user }}</span>
             <span class="date">{{ review.date | date }}</span>
@@ -120,7 +120,7 @@
       <h2>Similar Products</h2>
       <div class="product-grid">
         <div *ngFor="let similarProduct of similarProducts" class="product-card">
-          <img [src]="similarProduct.images[0]" [alt]="similarProduct.name">
+          <img [src]="similarProduct.images?.[0] || similarProduct.imageUrl" [alt]="similarProduct.name">
           <div class="product-info">
             <h3>{{ similarProduct.name }}</h3>
             <div class="price">${{ similarProduct.price.toFixed(2) }}</div>

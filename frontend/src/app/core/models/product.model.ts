@@ -1,32 +1,39 @@
+// frontend/src/app/core/models/product.model.ts
+
+// Review ve Specification arayüzleri backend DTO'larına göre ayarlanmalı
+// Şimdilik Product arayüzüne odaklanıyoruz.
 export interface Review {
-  id: number;
+  id?: number; // Backend'den geliyorsa
   rating: number;
   comment: string;
-  user: string;
-  date: Date;
-  userName: string;
-  createdAt: Date;
+  user?: string; // veya userName
+  date?: string | Date; // Backend'den formatlı string gelebilir
+  // Backend'deki Review modeline göre alanlar eklenebilir
 }
 
 export interface Specification {
   name: string;
   value: string;
-  key: string;
+  // key?: string; // Backend'de yoksa kaldırılabilir
 }
 
 export interface Product {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   price: number;
-  images: string[];
+  stock?: number;
+  stockQuantity?: number;
   imageUrl?: string;
-  stock: number;
-  category: string;
-  rating: number;
-  reviewCount: number;
-  specifications: Specification[];
-  reviews: Review[];
-  createdAt: Date;
-  updatedAt?: Date;
-} 
+  images?: string[];
+  categoryName?: string;
+  categoryId?: number;
+  category?: string;
+  rating?: number;
+  active: boolean;
+  reviews?: Review[];
+  reviewCount?: number;
+  specifications?: Specification[];
+  createdAt?: string;
+  updatedAt?: string;
+}

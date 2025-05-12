@@ -1,1 +1,68 @@
-<p>manage-products works!</p>
+<div class="manage-products-container">
+  <header class="page-header">
+    <h1>Product Management</h1>
+    <button class="btn btn-primary" routerLink="/admin/products/new">Add New Product</button>
+  </header>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>Loading products...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && products.length > 0" class="products-table-container">
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Rating</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.id }}</td>
+          <td>
+            <img [src]="product.imageUrl || product.images?.[0] || 'assets/placeholder.png'"
+                 [alt]="product.name"
+                 class="product-thumbnail">
+          </td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.categoryName || 'N/A' }}</td>
+          <td>${{ product.price.toFixed(2) }}</td>
+          <td>{{ product.stockQuantity }}</td>
+          <td>{{ product.rating?.toFixed(1) || 'N/A' }}</td>
+          <td>
+            <span class="status-badge" [class.active]="product.active" [class.inactive]="!product.active">
+              {{ product.active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button class="btn btn-sm btn-info" [routerLink]="['/admin/products/edit', product.id]">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteProduct(product.id)">
+              {{ product.active ? 'Deactivate' : 'Activate' }} </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="totalPages > 1" class="pagination-controls">
+       <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 0">Previous</button>
+       <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+       <button (click)="changePage(currentPage + 1)" [disabled]="currentPage >= totalPages - 1">Next</button>
+    </div>
+
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && products.length === 0" class="no-products-message">
+    <p>No products found.</p>
+  </div>
+</div>

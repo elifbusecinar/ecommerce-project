@@ -14,12 +14,17 @@ export interface LoginResponse {
   email: string;
 }
 
+export interface Role {
+  id: number;
+  name: string;
+}
+
 export interface User {
   id: number;
   email: string;
   firstName: string;
   lastName: string;
-  roles: string[];
+  roles: Role[];
 }
 
 @Injectable({
@@ -75,6 +80,8 @@ export class AuthService {
 
   hasRole(role: string): boolean {
     const user = this.currentUserSubject.value;
-    return user?.roles.includes(role) ?? false;
+    if (!user || !user.roles) return false;
+    const targetRoleName = role.startsWith('ROLE_') ? role.toUpperCase() : `ROLE_${role.toUpperCase()}`;
+    return user.roles.some(r => r.name.toUpperCase() === targetRoleName);
   }
 } 
