@@ -13,6 +13,7 @@ export interface Order {
   items: OrderItem[];
   totalAmount: number;
   status: OrderStatus;
+  paymentStatus: PaymentStatus;
   createdAt?: Date;
   updatedAt?: Date;
   trackingNumber?: string;
