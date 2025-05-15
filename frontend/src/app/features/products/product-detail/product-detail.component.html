@@ -35,7 +35,7 @@
                   class="star"
                   [class.filled]="star === 1">★</span>
           </div>
-          <span class="rating-value">{{ product.rating?.toFixed(1) }}</span>
+          <span class="rating-value">{{ product.rating.toFixed(1) }}</span>
           <a href="#reviews" class="review-count">({{ product.reviews?.length || 0 }} reviews)</a>
         </div>
         <div class="product-category" *ngIf="product.categoryName">

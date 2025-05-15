@@ -43,7 +43,7 @@
           <p class="product-price">${{ product.price.toFixed(2) }}</p>
           <div class="product-rating" *ngIf="product.rating">
             <span *ngFor="let star of [1,2,3,4,5]" class="star"
-                  [class.filled]="star <= (product.rating ?? 0)">★</span>
+                  [class.filled]="star <= product.rating">★</span>
             <span class="rating-count">({{ product.reviewCount ?? 0 }})</span>
           </div>
           <button (click)="addToCart(product)" class="add-to-cart-btn" [disabled]="(product.stockQuantity ?? product.stock ?? 0) === 0">

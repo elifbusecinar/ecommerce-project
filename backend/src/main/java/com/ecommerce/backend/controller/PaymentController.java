@@ -24,13 +24,13 @@ public class PaymentController {
     private final StripeService stripeService;
 
     // Belki frontend'den yayınlanabilir anahtarı almak için bir endpoint (opsiyonel)
-    @Value("${stripe.publishable.key}") // application.properties'e eklemeniz gerekebilir
-    private String stripePublishableKey;
+    @Value("${stripe.public-key}") // application.properties'e eklemeniz gerekebilir
+    private String stripePublicKey;
 
     @GetMapping("/config")
     public ResponseEntity<Map<String, String>> getStripeConfig() {
         Map<String, String> config = new HashMap<>();
-        config.put("publishableKey", stripePublishableKey);
+        config.put("publishableKey", stripePublicKey);
         return ResponseEntity.ok(config);
     }
 
