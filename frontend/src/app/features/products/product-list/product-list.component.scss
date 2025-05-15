@@ -24,6 +24,8 @@ $border-radius-lg: 8px;
 $box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 $box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
 
+@use "sass:color";
+
 .product-list-container {
   max-width: 1200px;
   margin: 2rem auto; // Üst ve alttan boşluk artırıldı
@@ -79,7 +81,7 @@ $box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
       transition: background-color 0.2s ease;
 
       &:hover {
-        background-color: darken($primary, 7.5%);
+        background-color: color.adjust($primary, $lightness: -7.5%);
       }
     }
   }
@@ -224,13 +226,13 @@ $box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
       transition: background-color 0.2s ease, transform 0.2s ease;
 
       &:hover:not(:disabled) {
-        background-color: darken($success, 8%);
+        background-color: color.adjust($success, $lightness: -8%);
         transform: translateY(-1px);
       }
 
       &:disabled {
-        background-color: lighten($secondary, 15%);
-        color: lighten($dark, 15%);
+        background-color: color.adjust($secondary, $lightness: 15%);
+        color: color.adjust($dark, $lightness: 15%);
         cursor: not-allowed;
         opacity: 0.8;
       }
@@ -264,7 +266,7 @@ $box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
 
   .pagination-btn {
     padding: ($spacer * 0.6) ($spacer * 1.2);
-    border: 1px solid darken($light, 10%);
+    border: 1px solid color.adjust($light, $lightness: -10%);
     background-color: white;
     color: $primary;
     border-radius: $border-radius;

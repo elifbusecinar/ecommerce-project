@@ -26,6 +26,8 @@ $box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 $box-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
 $transition-base: all 0.25s ease-in-out;
 
+@use "sass:color";
+
 .product-detail-container {
   max-width: 1200px;
   margin: 2rem auto;
@@ -101,7 +103,7 @@ $transition-base: all 0.25s ease-in-out;
     overflow: hidden;
     margin-bottom: $spacer;
     background-color: $light;
-    border: 1px solid darken($light, 5%);
+    border: 1px solid color.adjust($light, $lightness: -5%);
 
     .main-image {
       position: absolute;
@@ -135,7 +137,7 @@ $transition-base: all 0.25s ease-in-out;
       transition: border-color 0.2s ease, transform 0.2s ease;
 
       &:hover {
-        border-color: darken($primary, 10%);
+        border-color: color.adjust($primary, $lightness: -10%);
         transform: scale(1.05);
       }
 
@@ -188,7 +190,7 @@ $transition-base: all 0.25s ease-in-out;
         text-decoration: underline;
         color: $primary;
         cursor: pointer;
-        &:hover { color: darken($primary, 10%); }
+        &:hover { color: color.adjust($primary, $lightness: -10%); }
       }
     }
     .product-category a {
@@ -214,12 +216,12 @@ $transition-base: all 0.25s ease-in-out;
     margin-bottom: $spacer * 1.5;
 
     &.in-stock { background-color: rgba($success, 0.1); color: $success; }
-    &.low-stock { background-color: rgba($warning, 0.1); color: darken($warning, 10%); }
+    &.low-stock { background-color: rgba($warning, 0.1); color: color.adjust($warning, $lightness: -10%); }
     &.out-of-stock { background-color: rgba($danger, 0.1); color: $danger; }
   }
 
   .product-description {
-    color: lighten($dark, 15%);
+    color: color.adjust($dark, $lightness: 15%);
     line-height: 1.7;
     margin-bottom: $spacer * 1.5;
     font-size: 1rem;
