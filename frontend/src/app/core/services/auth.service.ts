@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { User } from '../models/user.model';
 
 export interface LoginRequest {
   email: string;
@@ -12,19 +13,6 @@ export interface LoginResponse {
   token: string;
   type: string;
   email: string;
-}
-
-export interface Role {
-  id: number;
-  name: string;
-}
-
-export interface User {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  roles: Role[];
 }
 
 @Injectable({
@@ -82,11 +70,6 @@ export class AuthService {
     const user = this.currentUserSubject.value;
     if (!user || !user.roles) return false;
     const targetRoleName = role.startsWith('ROLE_') ? role.toUpperCase() : `ROLE_${role.toUpperCase()}`;
-    // Roller string array ise
-    if (typeof (user.roles as unknown as any[])[0] === 'string') {
-      return (user.roles as unknown as string[]).some(r => r.toUpperCase() === targetRoleName);
-    }
-    // Roller obje array ise
-    return (user.roles as unknown as Role[]).some(r => r.name.toUpperCase() === targetRoleName);
+    return user.roles.some(r => r.toUpperCase() === targetRoleName);
   }
 } 

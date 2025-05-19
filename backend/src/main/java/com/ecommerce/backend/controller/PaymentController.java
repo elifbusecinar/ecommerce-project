@@ -24,7 +24,7 @@ public class PaymentController {
     private final StripeService stripeService;
 
     // Belki frontend'den yayınlanabilir anahtarı almak için bir endpoint (opsiyonel)
-    @Value("${stripe.public-key}") // application.properties'e eklemeniz gerekebilir
+    @Value("${stripe.public.key}") // application.properties'e eklemeniz gerekebilir
     private String stripePublicKey;
 
     @GetMapping("/config")

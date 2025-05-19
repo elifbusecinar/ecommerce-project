@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router'; // Import Router
 import { CartService } from '../../services/cart.service';
-import { AuthService, User } from '../../services/auth.service'; // Import User type
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/user.model';
 import { Subscription } from 'rxjs'; // Import Subscription for cleanup
 
 @Component({
