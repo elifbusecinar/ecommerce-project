@@ -35,5 +35,5 @@ build/
 ### Environment Variables ###
 .env
 
-src/test/resources/application-test.
-src/resources/application.properties
+
+backend/src/main/resources/application.properties
