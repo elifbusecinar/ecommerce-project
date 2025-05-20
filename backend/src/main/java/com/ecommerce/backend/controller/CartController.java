@@ -1,6 +1,7 @@
 package com.ecommerce.backend.controller;
  
 import com.ecommerce.backend.exception.BadRequestException;
+import com.ecommerce.backend.payload.dto.CartDTO;
 import com.ecommerce.backend.payload.dto.OrderItemDTO;
 import com.ecommerce.backend.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,14 +37,11 @@ public class CartController {
             @ApiResponse(responseCode = "400", description = "Invalid product ID or quantity, or insufficient stock"),
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
-    @PostMapping // `/add` yerine direkt `/` endpoint'i ve request body'de productId ve quantity
-    public ResponseEntity<List<OrderItemDTO>> addToCart(
-            // @AuthenticationPrincipal UserDetailsImpl currentUser, // Kullanıcıya özel sepet için
+    @PostMapping
+    public ResponseEntity<CartDTO> addToCart(
             @Parameter(description = "DTO containing productId and quantity", required = true)
             @RequestBody AddToCartRequestDTO addToCartRequest) {
-        // Long userId = currentUser != null ? currentUser.getId() : null; // Kullanıcıya özel sepet için
-        cartService.addToCart(addToCartRequest.getProductId(), addToCartRequest.getQuantity()); // Servis metodunu productId ve quantity alacak şekilde güncelleyin
-        return ResponseEntity.ok(cartService.viewCart()); // Her zaman güncel sepeti döndür
+        return ResponseEntity.ok(cartService.addItemToCart(null, null, addToCartRequest.getProductId(), addToCartRequest.getQuantity()));
     }
  
     @Operation(summary = "View cart", description = "Retrieves all items currently in the shopping cart.")
@@ -52,11 +50,8 @@ public class CartController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class, subTypes = {OrderItemDTO.class})))
     })
     @GetMapping
-    public ResponseEntity<List<OrderItemDTO>> viewCart(
-            /*@AuthenticationPrincipal UserDetailsImpl currentUser*/ // Kullanıcıya özel sepet için
-    ) {
-        // Long userId = currentUser != null ? currentUser.getId() : null; // Kullanıcıya özel sepet için
-        return ResponseEntity.ok(cartService.viewCart(/*userId*/));
+    public ResponseEntity<CartDTO> viewCart() {
+        return ResponseEntity.ok(cartService.getCartDTO(null, null));
     }
  
     @Operation(summary = "Update item quantity in cart", description = "Updates the quantity of a specific item in the cart.")
@@ -67,16 +62,13 @@ public class CartController {
             @ApiResponse(responseCode = "404", description = "Product not found in cart")
     })
     @PutMapping("/{productId}")
-    public ResponseEntity<List<OrderItemDTO>> updateCartItemQuantity(
-            // @AuthenticationPrincipal UserDetailsImpl currentUser, // Kullanıcıya özel sepet için
+    public ResponseEntity<CartDTO> updateCartItemQuantity(
             @Parameter(description = "ID of the product to update", required = true) @PathVariable Long productId,
             @Parameter(description = "Payload containing the new quantity", required = true) @RequestBody UpdateQuantityRequestDTO quantityRequest) {
-        // Long userId = currentUser != null ? currentUser.getId() : null; // Kullanıcıya özel sepet için
         if (quantityRequest.getQuantity() == null || quantityRequest.getQuantity() < 0) {
             throw new BadRequestException("Quantity must be a non-negative integer.");
         }
-        cartService.updateQuantity(productId, quantityRequest.getQuantity()/*, userId*/);
-        return ResponseEntity.ok(cartService.viewCart(/*userId*/));
+        return ResponseEntity.ok(cartService.updateItemQuantity(null, null, productId, quantityRequest.getQuantity()));
     }
  
     @Operation(summary = "Remove item from cart", description = "Removes a specific item from the shopping cart.")
@@ -86,12 +78,9 @@ public class CartController {
             @ApiResponse(responseCode = "404", description = "Product not found in cart")
     })
     @DeleteMapping("/{productId}")
-    public ResponseEntity<List<OrderItemDTO>> removeFromCart(
-            // @AuthenticationPrincipal UserDetailsImpl currentUser, // Kullanıcıya özel sepet için
+    public ResponseEntity<CartDTO> removeFromCart(
             @Parameter(description = "ID of the product to remove", required = true) @PathVariable Long productId) {
-        // Long userId = currentUser != null ? currentUser.getId() : null; // Kullanıcıya özel sepet için
-        cartService.removeFromCart(productId/*, userId*/);
-        return ResponseEntity.ok(cartService.viewCart(/*userId*/));
+        return ResponseEntity.ok(cartService.removeItemFromCart(null, null, productId));
     }
  
     @Operation(summary = "Clear cart", description = "Removes all items from the shopping cart.")
@@ -100,12 +89,8 @@ public class CartController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class, subTypes = {OrderItemDTO.class})))
     })
     @DeleteMapping
-    public ResponseEntity<List<OrderItemDTO>> clearCart(
-            /*@AuthenticationPrincipal UserDetailsImpl currentUser*/ // Kullanıcıya özel sepet için
-    ) {
-        // Long userId = currentUser != null ? currentUser.getId() : null; // Kullanıcıya özel sepet için
-        cartService.clearCart(/*userId*/);
-        return ResponseEntity.ok(cartService.viewCart(/*userId*/)); // Boş sepet döner
+    public ResponseEntity<CartDTO> clearCart() {
+        return ResponseEntity.ok(cartService.clearCart(null, null));
     }
  
     // Checkout işlemi genellikle ayrı bir OrderController'a taşınır.

@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms'; // Zaten CheckoutComponent'te var
+import { ReactiveFormsModule } from '@angular/forms';
 import { CheckoutRoutingModule } from './checkout-routing.module';
 import { CheckoutComponent } from './checkout.component';
-import { NgxStripeModule } from 'ngx-stripe'; // ngx-stripe importu
+import { NgxStripeModule } from 'ngx-stripe';
+import { environment } from '../../../environments/environment'; // environment import edildi
 
 @NgModule({
   declarations: [
@@ -12,9 +13,11 @@ import { NgxStripeModule } from 'ngx-stripe'; // ngx-stripe importu
   imports: [
     CommonModule,
     CheckoutRoutingModule,
-    ReactiveFormsModule, // CheckoutComponent standalone olduğu için kendi imports'unda olabilir
-    CheckoutComponent,   // Standalone component importu
-    NgxStripeModule.forRoot('pk_test_SENIN_YAYINLANABILIR_ANAHTARIN') // Stripe Publishable Key
+    ReactiveFormsModule,
+    CheckoutComponent,
+    // NgxStripeModule.forRoot() app.config.ts'de zaten yapıldıysa burada tekrar çağırmaya gerek yok.
+    // Eğer sadece bu modülde kullanılacaksa ve app.config.ts'de yoksa buraya ekleyebilirsiniz:
+    // NgxStripeModule.forRoot(environment.stripePublishableKey)
   ]
 })
 export class CheckoutModule { }

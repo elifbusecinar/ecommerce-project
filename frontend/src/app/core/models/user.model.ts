@@ -16,4 +16,21 @@ export interface User {
   roles: string[]; // Backend UserDTO'daki Set<String> rollerine karşılık gelir
   createdAt?: string; // Backend DTO'dan formatlı string olarak gelecek
   updatedAt?: string; // Backend DTO'dan formatlı string olarak gelecek
+  token?: string; // JWT token için eklendi
+  addresses?: any[];
+  orders?: any[];
+}
+
+export interface UserDTO {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  active: boolean;
+  lastLogin?: string;
+  roles: string[];
+  createdAt?: string;
+  updatedAt?: string;
 }

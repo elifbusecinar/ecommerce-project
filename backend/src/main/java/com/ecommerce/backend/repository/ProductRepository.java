@@ -1,5 +1,6 @@
 package com.ecommerce.backend.repository;
 
+import com.ecommerce.backend.model.Category;
 import com.ecommerce.backend.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,4 +27,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     
     @Query("SELECT p FROM Product p WHERE p.rating >= :minRating AND p.active = true")
     Page<Product> findTopRatedProducts(@Param("minRating") double minRating, Pageable pageable);
+
+    Page<Product> findByCategoryAndActiveTrue(Category category, Pageable pageable); // Kategoriye göre aktif ürünler
+
+    List<Product> findByCategoryAndIdNotAndActiveTrue(Category category, Long productId, Pageable pageable); // Benzer aktif ürünler
 }
+
