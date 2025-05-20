@@ -251,7 +251,7 @@ $transition-base: all 0.25s ease-in-out;
       .quantity-controls {
         display: flex;
         align-items: center;
-        border: 1px solid darken($light, 10%);
+        border: 1px solid color.adjust($light, $lightness: -10%);
         border-radius: $border-radius;
 
         .quantity-btn {
@@ -268,7 +268,9 @@ $transition-base: all 0.25s ease-in-out;
           justify-content: center;
           transition: background-color 0.2s ease;
 
-          &:hover { background-color: darken($light, 5%); }
+          &:hover { 
+            background-color: color.adjust($light, $lightness: -5%); 
+          }
           &:first-child { border-radius: $border-radius 0 0 $border-radius; }
           &:last-child { border-radius: 0 $border-radius $border-radius 0; }
         }
@@ -278,8 +280,8 @@ $transition-base: all 0.25s ease-in-out;
           height: 38px;
           text-align: center;
           border: none;
-          border-left: 1px solid darken($light, 10%);
-          border-right: 1px solid darken($light, 10%);
+          border-left: 1px solid color.adjust($light, $lightness: -10%);
+          border-right: 1px solid color.adjust($light, $lightness: -10%);
           font-size: 1rem;
           font-weight: $font-weight-medium;
           padding: 0 ($spacer * 0.25);
@@ -297,7 +299,7 @@ $transition-base: all 0.25s ease-in-out;
     .add-to-cart-button {
       flex-grow: 1; // Kalan alanı doldurur (yan yana ise)
       padding: ($spacer * 0.9) ($spacer * 2);
-      background-color: $success;
+      background-color: color.adjust($success, $lightness: -8%);
       color: white;
       border: none;
       border-radius: $border-radius;
@@ -315,13 +317,13 @@ $transition-base: all 0.25s ease-in-out;
       .fas { font-size: 1rem; }
 
       &:hover:not(:disabled) {
-        background-color: darken($success, 8%);
+        background-color: color.adjust($success, $lightness: -16%);
         transform: translateY(-2px);
-        box-shadow: 0 2px 6px rgba(darken($success, 10%), 0.3);
+        box-shadow: 0 2px 6px rgba(color.adjust($success, $lightness: -18%), 0.3);
       }
 
       &:disabled {
-        background-color: lighten($secondary, 20%);
+        background-color: color.adjust($secondary, $lightness: 20%);
         color: $secondary;
         cursor: not-allowed;
         opacity: 0.7;
@@ -341,7 +343,7 @@ $transition-base: all 0.25s ease-in-out;
 
   .tabs-nav {
     display: flex;
-    border-bottom: 1px solid darken($light, 10%);
+    border-bottom: 1px solid color.adjust($light, $lightness: -10%);
     background-color: $light;
 
     .tab-button {
@@ -397,7 +399,9 @@ $transition-base: all 0.25s ease-in-out;
           width: 30%; // İsim sütunu için genişlik
           min-width: 150px;
         }
-        &.spec-value { color: lighten($dark, 20%); }
+        &.spec-value { 
+          color: color.adjust($dark, $lightness: 20%); 
+        }
       }
     }
   }
@@ -441,14 +445,17 @@ $transition-base: all 0.25s ease-in-out;
     .review-textarea {
       width: 100%;
       padding: $spacer;
-      border: 1px solid darken($light, 10%);
+      border: 1px solid color.adjust($light, $lightness: -10%);
       border-radius: $border-radius;
       margin-bottom: $spacer;
       resize: vertical;
       min-height: 100px;
       font-family: $font-family-base;
       font-size: 1rem;
-      &:focus { outline: none; border-color: $primary; box-shadow: 0 0 0 0.2rem rgba($primary, 0.15); }
+      &:focus { 
+        border-color: $primary; 
+        box-shadow: 0 0 0 0.2rem rgba($primary, 0.15); 
+      }
     }
 
     .submit-review-button {
@@ -460,8 +467,13 @@ $transition-base: all 0.25s ease-in-out;
       cursor: pointer;
       font-weight: $font-weight-medium;
       transition: background-color 0.2s ease;
-      &:hover:not(:disabled) { background-color: darken($primary, 8%); }
-      &:disabled { background-color: lighten($secondary, 15%); cursor: not-allowed; }
+      &:hover:not(:disabled) { 
+        background-color: color.adjust($primary, $lightness: -8%); 
+      }
+      &:disabled { 
+        background-color: color.adjust($secondary, $lightness: 15%); 
+        cursor: not-allowed; 
+      }
     }
   }
 
@@ -488,7 +500,10 @@ $transition-base: all 0.25s ease-in-out;
           &.filled { color: $warning; }
         }
       }
-      .review-comment { color: lighten($dark, 10%); line-height: 1.6; }
+      .review-comment { 
+        color: color.adjust($dark, $lightness: 10%); 
+        line-height: 1.6; 
+      }
     }
   }
 }

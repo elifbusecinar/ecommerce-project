@@ -1,69 +1,70 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router'; // Import Router
-import { CartService } from '../../services/cart.service';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user.model';
-import { Subscription } from 'rxjs'; // Import Subscription for cleanup
+import { CartService } from '../../services/cart.service';
+import { WishlistService } from '../../../core/services/wishlist.service';
 
 @Component({
   selector: 'app-header',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule]
 })
 export class HeaderComponent implements OnInit {
-  totalItems = 0;
   isLoggedIn = false;
-  userName: string | null = null;
-  isAdmin = false;
-
-  private cartSubscription: Subscription | undefined;
-  private userSubscription: Subscription | undefined;
+  currentUser: any = null;
+  cartItemCount = 0;
+  wishlistCount = 0;
+  searchQuery = '';
+  isUserMenuOpen = false;
 
   constructor(
-    private readonly cartService: CartService,
-    private readonly authService: AuthService,
-    private readonly router: Router
+    private authService: AuthService,
+    private cartService: CartService,
+    private wishlistService: WishlistService
   ) {}
 
   ngOnInit() {
-    // Subscribe to cart items to update totalItems
-    this.cartSubscription = this.cartService.getCart().subscribe(items => {
-      // Calculate total items based on the quantity of each item in the cart
-      this.totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
+    this.authService.currentUser$.subscribe(user => {
+      this.isLoggedIn = !!user;
+      this.currentUser = user;
     });
 
-    // Subscribe to current user changes
-    this.userSubscription = this.authService.currentUser$.subscribe(user => {
-      console.log('Current user in header:', user);
-      this.isLoggedIn = !!user;
-      if (user) {
-        // Use firstName if available, otherwise fallback to email or a generic 'User'
-        this.userName = user.firstName || user.email || 'User';
-        this.isAdmin = this.authService.hasRole('ADMIN'); // Check if user is admin
-        console.log('Is Admin in header:', this.isAdmin);
-        console.log('User roles:', user.roles);
-      } else {
-        this.userName = null;
-        this.isAdmin = false;
-      }
+    this.cartService.cartItemCount$.subscribe(count => {
+      this.cartItemCount = count;
+    });
+
+    this.wishlistService.wishlistCount$.subscribe(count => {
+      this.wishlistCount = count;
     });
   }
 
-  ngOnDestroy() {
-    // Unsubscribe to prevent memory leaks
-    if (this.cartSubscription) {
-      this.cartSubscription.unsubscribe();
+  onSearch() {
+    if (this.searchQuery.trim()) {
+      // Implement search functionality
+      console.log('Searching for:', this.searchQuery);
     }
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe();
-    }
+  }
+
+  toggleUserMenu() {
+    this.isUserMenuOpen = !this.isUserMenuOpen;
   }
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/auth/login']); // Redirect to login page after logout
+    this.isUserMenuOpen = false;
+  }
+
+  openLoginModal() {
+    // Implement login modal opening
+    console.log('Opening login modal');
+  }
+
+  openRegisterModal() {
+    // Implement register modal opening
+    console.log('Opening register modal');
   }
 }

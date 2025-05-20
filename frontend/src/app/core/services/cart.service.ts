@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Product } from '../models/product.model';
 import { CartItem } from '../models/cart-item.model';
+import { Cart } from '../models/cart.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,15 +13,25 @@ import { CartItem } from '../models/cart-item.model';
 export class CartService {
   private apiUrl = `${environment.apiUrl}/cart`;
   private cartItems = new BehaviorSubject<CartItem[]>([]);
+  private cartItemCountSubject = new BehaviorSubject<number>(0);
+  cartItemCount$ = this.cartItemCountSubject.asObservable();
 
   constructor(private http: HttpClient) {
     this.loadCart();
+    this.loadCartCount();
   }
 
   private loadCart(): void {
-    this.http.get<CartItem[]>(this.apiUrl).subscribe(
-      items => this.cartItems.next(items),
+    this.http.get<Cart>(this.apiUrl, { withCredentials: true }).subscribe(
+      cart => this.cartItems.next(cart.items),
       error => console.error('Error loading cart:', error)
+    );
+  }
+
+  private loadCartCount(): void {
+    this.getCart().subscribe(
+      items => this.cartItemCountSubject.next(items.reduce((sum, item) => sum + item.quantity, 0)),
+      error => console.error('Error loading cart count:', error)
     );
   }
 
@@ -38,16 +49,16 @@ export class CartService {
 
   getTotalPrice(): number {
     return this.cartItems.value.reduce(
-      (total, item) => total + (item.product.price * item.quantity),
+      (total, item) => total + item.subtotal,
       0
     );
   }
 
   addToCart(product: Product, quantity: number = 1): Observable<CartItem[]> {
-    return this.http.post<CartItem[]>(this.apiUrl, { productId: product.id, quantity }).pipe(
-      map(items => {
-        this.cartItems.next(items);
-        return items;
+    return this.http.post<Cart>(this.apiUrl, { productId: product.id, quantity }, { withCredentials: true }).pipe(
+      map(cart => {
+        this.cartItems.next(cart.items);
+        return cart.items;
       })
     );
   }
@@ -57,29 +68,33 @@ export class CartService {
   }
 
   updateQuantity(productId: number, quantity: number): Observable<CartItem[]> {
-    return this.http.put<CartItem[]>(`${this.apiUrl}/${productId}`, { quantity }).pipe(
-      map(items => {
-        this.cartItems.next(items);
-        return items;
+    return this.http.put<Cart>(`${this.apiUrl}/${productId}`, { quantity }, { withCredentials: true }).pipe(
+      map(cart => {
+        this.cartItems.next(cart.items);
+        return cart.items;
       })
     );
   }
 
   removeItem(productId: number): Observable<CartItem[]> {
-    return this.http.delete<CartItem[]>(`${this.apiUrl}/${productId}`).pipe(
-      map(items => {
-        this.cartItems.next(items);
-        return items;
+    return this.http.delete<Cart>(`${this.apiUrl}/${productId}`, { withCredentials: true }).pipe(
+      map(cart => {
+        this.cartItems.next(cart.items);
+        return cart.items;
       })
     );
   }
 
   clearCart(): Observable<CartItem[]> {
-    return this.http.delete<CartItem[]>(this.apiUrl).pipe(
-      map(items => {
-        this.cartItems.next([]);
-        return items;
+    return this.http.delete<Cart>(this.apiUrl, { withCredentials: true }).pipe(
+      map(cart => {
+        this.cartItems.next(cart.items);
+        return cart.items;
       })
     );
+  }
+
+  private updateCartCount(items: CartItem[]): void {
+    this.cartItemCountSubject.next(items.reduce((sum, item) => sum + item.quantity, 0));
   }
 } 

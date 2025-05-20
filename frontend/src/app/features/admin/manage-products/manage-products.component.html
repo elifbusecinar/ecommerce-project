@@ -31,12 +31,12 @@
         <tr *ngFor="let product of products">
           <td>{{ product.id }}</td>
           <td>
-            <img [src]="product.imageUrl || product.images?.[0] || 'assets/placeholder.png'"
+            <img [src]="product.imageUrl || product.images?.[0] || 'assets/images/placeholder.png'"
                  [alt]="product.name"
                  class="product-thumbnail">
           </td>
           <td>{{ product.name }}</td>
-          <td>{{ product.categoryName || 'N/A' }}</td>
+          <td>{{ product.category?.name || 'N/A' }}</td>
           <td>${{ product.price.toFixed(2) }}</td>
           <td>{{ product.stockQuantity }}</td>
           <td>{{ product.rating?.toFixed(1) || 'N/A' }}</td>

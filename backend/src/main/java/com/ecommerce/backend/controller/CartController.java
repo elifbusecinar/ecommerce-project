@@ -13,18 +13,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize; // Eğer kullanıcıya özel sepet için gerekirse
-// import org.springframework.security.core.annotation.AuthenticationPrincipal; // Kullanıcıya özel sepet için
-// import com.ecommerce.backend.security.UserDetailsImpl; // Kullanıcıya özel sepet için
 import org.springframework.web.bind.annotation.*;
  
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
  
 @RestController
-@RequestMapping("/cart") // Gerçek erişim /api/cart olacak
+@RequestMapping("/cart")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200") // Frontend adresinize göre güncelleyin
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @Tag(name = "Cart", description = "Shopping Cart APIs")
 public class CartController {
  
@@ -40,8 +38,10 @@ public class CartController {
     @PostMapping
     public ResponseEntity<CartDTO> addToCart(
             @Parameter(description = "DTO containing productId and quantity", required = true)
-            @RequestBody AddToCartRequestDTO addToCartRequest) {
-        return ResponseEntity.ok(cartService.addItemToCart(null, null, addToCartRequest.getProductId(), addToCartRequest.getQuantity()));
+            @RequestBody AddToCartRequestDTO addToCartRequest,
+            HttpSession session) {
+        String guestCartId = session.getId();
+        return ResponseEntity.ok(cartService.addItemToCart(null, guestCartId, addToCartRequest.getProductId(), addToCartRequest.getQuantity()));
     }
  
     @Operation(summary = "View cart", description = "Retrieves all items currently in the shopping cart.")
@@ -50,8 +50,9 @@ public class CartController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class, subTypes = {OrderItemDTO.class})))
     })
     @GetMapping
-    public ResponseEntity<CartDTO> viewCart() {
-        return ResponseEntity.ok(cartService.getCartDTO(null, null));
+    public ResponseEntity<CartDTO> viewCart(HttpSession session) {
+        String guestCartId = session.getId();
+        return ResponseEntity.ok(cartService.getCartDTO(null, guestCartId));
     }
  
     @Operation(summary = "Update item quantity in cart", description = "Updates the quantity of a specific item in the cart.")
@@ -64,11 +65,13 @@ public class CartController {
     @PutMapping("/{productId}")
     public ResponseEntity<CartDTO> updateCartItemQuantity(
             @Parameter(description = "ID of the product to update", required = true) @PathVariable Long productId,
-            @Parameter(description = "Payload containing the new quantity", required = true) @RequestBody UpdateQuantityRequestDTO quantityRequest) {
+            @Parameter(description = "Payload containing the new quantity", required = true) @RequestBody UpdateQuantityRequestDTO quantityRequest,
+            HttpSession session) {
         if (quantityRequest.getQuantity() == null || quantityRequest.getQuantity() < 0) {
             throw new BadRequestException("Quantity must be a non-negative integer.");
         }
-        return ResponseEntity.ok(cartService.updateItemQuantity(null, null, productId, quantityRequest.getQuantity()));
+        String guestCartId = session.getId();
+        return ResponseEntity.ok(cartService.updateItemQuantity(null, guestCartId, productId, quantityRequest.getQuantity()));
     }
  
     @Operation(summary = "Remove item from cart", description = "Removes a specific item from the shopping cart.")
@@ -79,8 +82,10 @@ public class CartController {
     })
     @DeleteMapping("/{productId}")
     public ResponseEntity<CartDTO> removeFromCart(
-            @Parameter(description = "ID of the product to remove", required = true) @PathVariable Long productId) {
-        return ResponseEntity.ok(cartService.removeItemFromCart(null, null, productId));
+            @Parameter(description = "ID of the product to remove", required = true) @PathVariable Long productId,
+            HttpSession session) {
+        String guestCartId = session.getId();
+        return ResponseEntity.ok(cartService.removeItemFromCart(null, guestCartId, productId));
     }
  
     @Operation(summary = "Clear cart", description = "Removes all items from the shopping cart.")
@@ -89,31 +94,10 @@ public class CartController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class, subTypes = {OrderItemDTO.class})))
     })
     @DeleteMapping
-    public ResponseEntity<CartDTO> clearCart() {
-        return ResponseEntity.ok(cartService.clearCart(null, null));
+    public ResponseEntity<CartDTO> clearCart(HttpSession session) {
+        String guestCartId = session.getId();
+        return ResponseEntity.ok(cartService.clearCart(null, guestCartId));
     }
- 
-    // Checkout işlemi genellikle ayrı bir OrderController'a taşınır.
-    // Mevcut CartController'ınızda bir checkout metodu vardı, ancak bu sipariş oluşturma mantığını içermelidir.
-    // Bu endpoint burada kalacaksa, OrderService'i çağırıp sipariş oluşturmalı ve sepeti temizlemelidir.
-    // Şimdilik bu endpoint'i yorum satırına alıyorum, çünkü CheckoutComponent'unuz OrderService'i kullanıyor.
-    /*
-    @Operation(summary = "Checkout cart", description = "Converts the cart into an order and clears the cart.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Checkout successful, order created"),
-            @ApiResponse(responseCode = "400", description = "Cart is empty or other validation error"),
-            @ApiResponse(responseCode = "401", description = "User not authenticated (if required for checkout)")
-    })
-    @PostMapping("/checkout")
-    @PreAuthorize("isAuthenticated()") // Genellikle checkout için kullanıcı girişi gerekir
-    public ResponseEntity<String> checkout(@AuthenticationPrincipal UserDetailsImpl currentUser) {
-        // Long userId = currentUser.getId();
-        // Order createdOrder = orderService.createOrderFromCart(userId); // OrderService'te böyle bir metod olmalı
-        // cartService.clearCart(userId);
-        // return ResponseEntity.ok("Checkout successful! Order ID: " + createdOrder.getId());
-        return ResponseEntity.ok(cartService.checkout()); // Eski basit hali
-    }
-    */
 }
  
 // Controller'a gönderilecek istek body'leri için basit DTO'lar

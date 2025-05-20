@@ -1,32 +1,73 @@
 <header class="header">
-  <div class="header-container">
-    <a routerLink="/" class="logo">
-      <span class="logo-text">E-Commerce</span>
-    </a>
-
-    <nav class="nav-menu">
-      <a routerLink="/products" routerLinkActive="active" class="nav-link">Products</a>
-      <a *ngIf="isLoggedIn && isAdmin" routerLink="/admin" routerLinkActive="active" class="nav-link">Admin Panel</a>
-    </nav>
-
-    <div class="header-actions">
-      <a routerLink="/cart" class="cart-link" aria-label="Shopping Cart">
-        <i class="fas fa-shopping-cart"></i>
-        <span class="cart-count" *ngIf="totalItems > 0">{{ totalItems }}</span>
-      </a>
-
-      <div class="auth-buttons" *ngIf="!isLoggedIn">
-        <a routerLink="/auth/login" class="btn-login">Login</a>
-        <a routerLink="/auth/register" class="btn-register">Register</a>
+  <div class="header-top">
+    <div class="container">
+      <div class="contact-info">
+        <a href="tel:+901234567890"><i class="fas fa-phone"></i> +90 123 456 7890</a>
+        <a href="mailto:info&#64;ecommerce.com"><i class="fas fa-envelope"></i> info&#64;ecommerce.com</a>
       </div>
-
-      <div class="user-menu" *ngIf="isLoggedIn">
-        <a routerLink="/profile" class="nav-link user-name-link" title="View Profile">
-          <i class="fas fa-user-circle" style="margin-right: 5px;"></i>
-          <span>{{ userName }}</span>
-        </a>
-        <button class="btn-logout" (click)="logout()">Logout</button>
+      <div class="social-links">
+        <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+        <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
       </div>
     </div>
   </div>
+
+  <nav class="main-nav">
+    <div class="container">
+      <div class="nav-left">
+        <a routerLink="/" class="logo">
+          <img src="assets/images/logo.png" alt="E-Commerce Logo" />
+        </a>
+        <div class="search-bar">
+          <input type="text" placeholder="Search products..." [(ngModel)]="searchQuery" (keyup.enter)="onSearch()">
+          <button (click)="onSearch()"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <div class="nav-links">
+          <a routerLink="/products" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fas fa-store"></i> Products
+          </a>
+          <a routerLink="/categories" routerLinkActive="active">
+            <i class="fas fa-th-large"></i> Categories
+          </a>
+          <a routerLink="/deals" routerLinkActive="active">
+            <i class="fas fa-tag"></i> Deals
+          </a>
+        </div>
+
+        <div class="user-actions">
+          <a routerLink="/wishlist" class="wishlist-btn" *ngIf="isLoggedIn">
+            <i class="fas fa-heart"></i>
+            <span class="badge" *ngIf="wishlistCount > 0">{{ wishlistCount }}</span>
+          </a>
+          
+          <a routerLink="/cart" class="cart-btn">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+          </a>
+
+          <div class="user-menu" *ngIf="isLoggedIn">
+            <button class="user-btn" (click)="toggleUserMenu()">
+              <i class="fas fa-user"></i>
+              <span>{{ currentUser?.firstName }}</span>
+            </button>
+            <div class="dropdown-menu" [class.show]="isUserMenuOpen">
+              <a routerLink="/profile"><i class="fas fa-user-circle"></i> Profile</a>
+              <a routerLink="/orders"><i class="fas fa-box"></i> Orders</a>
+              <a routerLink="/settings"><i class="fas fa-cog"></i> Settings</a>
+              <a (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+          </div>
+
+          <div class="auth-buttons" *ngIf="!isLoggedIn">
+            <button class="btn btn-outline" (click)="openLoginModal()">Login</button>
+            <button class="btn btn-primary" (click)="openRegisterModal()">Register</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
 </header>

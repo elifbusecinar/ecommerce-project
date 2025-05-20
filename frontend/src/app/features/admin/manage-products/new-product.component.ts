@@ -1,143 +1,142 @@
-import { Component, OnInit } from '@angular/core'; // OnInit eklendi
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { FormsModule, NgForm } from '@angular/forms'; // NgForm eklendi
+import { CommonModule } from '@angular/common';
+import { CategoryService } from '../../../core/services/category.service';
 import { ProductService } from '../../../core/services/product.service';
-import { CategoryService } from '../../../core/services/category.service'; // CategoryService eklendi
-import { Product } from '../../../core/models/product.model';
-import { Category } from '../../../core/models/category.model'; // Category modeli eklendi
-import { HttpErrorResponse } from '@angular/common/http';
-
-interface ProductFormData {
-  id?: number | null; // id opsiyonel ve null olabilir
-  name: string;
-  price: number | null;
-  stockQuantity: number | null;
-  description: string;
-  active: boolean;
-  categoryId: number | null; // Kategori ID'si eklendi
-}
+import { Category } from '../../../core/models/category.model';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-new-product',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
-  providers: [ProductService, CategoryService],
   templateUrl: './new-product.component.html',
-  styleUrls: ['./new-product.component.scss'] // new-product.component.scss olarak güncellendi
+  styleUrls: ['./new-product.component.scss'],
+  standalone: true,
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  encapsulation: ViewEncapsulation.None
 })
-export class NewProductComponent implements OnInit { // OnInit implement edildi
-  product: ProductFormData = { // Interface kullanıldı
-    id: null,
-    name: '',
-    price: null,
-    stockQuantity: null,
-    description: '',
-    active: true,
-    categoryId: null // Kategori ID'si başlangıç değeri
-  };
-
-  categories: Category[] = []; // Kategorileri tutmak için
-  imageFile: File | null = null;
-  imagePreview: string | ArrayBuffer | null = null; // ArrayBuffer eklendi
-  errorMessage: string | null = null;
+export class NewProductComponent implements OnInit {
+  productForm: FormGroup;
+  categories: Category[] = [];
   isLoading = false;
+  errorMessage = '';
+  selectedFile: File | null = null;
+  imagePreview: string | ArrayBuffer | null = null;
 
   constructor(
+    private fb: FormBuilder,
     private productService: ProductService,
-    private categoryService: CategoryService, // CategoryService inject edildi
+    private categoryService: CategoryService,
     private router: Router
-  ) {}
+  ) {
+    this.productForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]],
+      description: ['', [Validators.maxLength(1000)]],
+      price: ['', [Validators.required, Validators.min(0.01)]],
+      stockQuantity: ['', [Validators.required, Validators.min(0)]],
+      categoryId: ['', Validators.required],
+      active: [true]
+    });
+  }
+
+  // Form kontrollerine kolay erişim için getter'lar
+  get name() { return this.productForm.get('name'); }
+  get description() { return this.productForm.get('description'); }
+  get price() { return this.productForm.get('price'); }
+  get stockQuantity() { return this.productForm.get('stockQuantity'); }
+  get categoryId() { return this.productForm.get('categoryId'); }
 
   ngOnInit(): void {
     this.loadCategories();
   }
 
   loadCategories(): void {
-    this.categoryService.getAllCategories().subscribe({
-      next: (data: Category[]) => {
-        this.categories = data;
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error('Error loading categories:', err);
-        this.errorMessage = 'Failed to load categories. Please try again.';
-      }
-    });
+    this.isLoading = true;
+    this.categoryService.getAllCategories()
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (categories) => {
+          this.categories = categories;
+          if (categories.length === 0) {
+            this.errorMessage = 'No categories available. Please create a category first.';
+          }
+        },
+        error: (error) => {
+          console.error('Error loading categories:', error);
+          this.errorMessage = 'Failed to load categories. Please try again later.';
+        }
+      });
   }
 
   onFileSelected(event: Event): void {
-    const element = event.currentTarget as HTMLInputElement;
-    let fileList: FileList | null = element.files;
-    if (fileList && fileList[0]) {
-      this.imageFile = fileList[0];
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      
+      // Resim önizleme
       const reader = new FileReader();
       reader.onload = e => this.imagePreview = reader.result;
-      reader.readAsDataURL(this.imageFile);
+      reader.readAsDataURL(this.selectedFile);
     } else {
-      this.imageFile = null;
+      this.selectedFile = null;
       this.imagePreview = null;
     }
   }
 
-  onSubmit(productForm: NgForm): void { // NgForm parametre olarak alındı
-    this.errorMessage = null;
-    if (productForm.invalid) {
-      this.errorMessage = "Please correct the errors in the form.";
-      Object.values(productForm.controls).forEach(control => {
-        control.markAsTouched();
-      });
+  onSubmit(): void {
+    if (this.productForm.invalid) {
+      this.markFormGroupTouched(this.productForm);
       return;
     }
-    if (this.isLoading) return;
+
+    if (!this.productForm.get('categoryId')?.value) {
+      this.errorMessage = 'Please select a category';
+      return;
+    }
 
     this.isLoading = true;
+    this.errorMessage = '';
+
     const formData = new FormData();
+    const formValue = this.productForm.value;
+    
+    // Convert form values to FormData
+    Object.keys(formValue).forEach(key => {
+      if (key === 'price' || key === 'stockQuantity') {
+        formData.append(key, formValue[key].toString());
+      } else {
+        formData.append(key, formValue[key]);
+      }
+    });
 
-    // ProductCreateDTO veya ProductUpdateDTO'ya uygun alanları ekleyin
-    formData.append('name', this.product.name);
-    if (this.product.price !== null) {
-      formData.append('price', this.product.price.toString());
-    }
-    if (this.product.stockQuantity !== null) {
-      formData.append('stockQuantity', this.product.stockQuantity.toString());
-    }
-    if (this.product.description) {
-      formData.append('description', this.product.description);
-    }
-    formData.append('active', String(this.product.active));
-    if (this.product.categoryId !== null) {
-      formData.append('categoryId', this.product.categoryId.toString());
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
     }
 
-    if (this.imageFile) {
-      formData.append('imageFile', this.imageFile, this.imageFile.name);
-    }
-
-    // Backend'deki ProductController.createProduct, ProductCreateDTO bekliyor.
-    // FormData yerine direkt DTO göndermek daha type-safe olabilir,
-    // ancak dosya yükleme için FormData genellikle daha yaygındır.
-    // ProductService.addProduct metodunu buna göre düzenlemeniz gerekebilir.
-    // Şimdilik ProductService.addProduct'ın FormData kabul ettiğini varsayıyoruz.
-
-    this.productService.addProduct(formData).subscribe({
-      next: () => {
-        this.isLoading = false;
-        alert('Product added successfully!'); // Daha iyi bir kullanıcı deneyimi için toast/snackbar kullanın
-        this.router.navigate(['/admin/products']);
-      },
-      error: (err: HttpErrorResponse) => {
-        this.isLoading = false;
-        console.error('Error adding product:', err);
-        if (err.error && typeof err.error === 'string') {
-            this.errorMessage = err.error;
-        } else if (err.error && err.error.message) {
-            this.errorMessage = err.error.message;
-        } else if (err.message) {
-            this.errorMessage = err.message;
-        } else {
-            this.errorMessage = 'Failed to add product. Please check the console for more details.';
+    this.productService.createProduct(formData)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/admin/products']);
+        },
+        error: (error) => {
+          console.error('Error creating product:', error);
+          if (error.error?.message) {
+            this.errorMessage = error.error.message;
+          } else if (error.error && typeof error.error === 'string') {
+            this.errorMessage = error.error;
+          } else {
+            this.errorMessage = 'Failed to create product. Please try again.';
+          }
         }
-        // alert('Failed to add product. Please try again.');
+      });
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup): void {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
       }
     });
   }

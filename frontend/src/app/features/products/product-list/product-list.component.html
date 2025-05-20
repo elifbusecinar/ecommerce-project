@@ -46,8 +46,8 @@
                   [class.filled]="star <= product.rating">★</span>
             <span class="rating-count">({{ product.reviewCount ?? 0 }})</span>
           </div>
-          <button (click)="addToCart(product)" class="add-to-cart-btn" [disabled]="(product.stockQuantity ?? product.stock ?? 0) === 0">
-            {{ (product.stockQuantity ?? product.stock ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart' }}
+          <button (click)="addToCart(product)" class="add-to-cart-btn" [disabled]="product.stockQuantity === 0">
+            {{ product.stockQuantity === 0 ? 'Out of Stock' : 'Add to Cart' }}
           </button>
         </div>
       </div>

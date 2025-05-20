@@ -1,69 +1,151 @@
-<h2>Add New Product</h2>
-<form class="new-product-form" (ngSubmit)="onSubmit(productForm)" #productForm="ngForm" novalidate>
-  <div class="form-group">
-    <label for="name">Product Name:</label>
-    <input id="name" name="name" [(ngModel)]="product.name" required minlength="3" #name="ngModel"
-           [ngClass]="{ 'is-invalid': productForm.submitted && name.invalid }">
-    <div *ngIf="productForm.submitted && name.invalid" class="invalid-feedback">
-      <span *ngIf="name.errors?.['required']">Product name is required.</span>
-      <span *ngIf="name.errors?.['minlength']">Product name must be at least 3 characters.</span>
+<div class="add-product-container">
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <div class="card">
+          <div class="card-header">
+            <h2>Add New Product</h2>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <label for="name" class="form-label">Product Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  formControlName="name"
+                  [ngClass]="{'is-invalid': name?.invalid && (name?.dirty || name?.touched)}"
+                >
+                <div class="invalid-feedback" *ngIf="name?.invalid && (name?.dirty || name?.touched)">
+                  <span *ngIf="name?.errors?.['required']">Product name is required</span>
+                  <span *ngIf="name?.errors?.['minlength']">Product name must be at least 3 characters</span>
+                  <span *ngIf="name?.errors?.['maxlength']">Product name cannot exceed 255 characters</span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  class="form-control"
+                  id="description"
+                  rows="3"
+                  formControlName="description"
+                  [ngClass]="{'is-invalid': description?.invalid && (description?.dirty || description?.touched)}"
+                ></textarea>
+                <div class="invalid-feedback" *ngIf="description?.invalid && (description?.dirty || description?.touched)">
+                  <span *ngIf="description?.errors?.['maxlength']">Description cannot exceed 1000 characters</span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="price"
+                  formControlName="price"
+                  [ngClass]="{'is-invalid': price?.invalid && (price?.dirty || price?.touched)}"
+                >
+                <div class="invalid-feedback" *ngIf="price?.invalid && (price?.dirty || price?.touched)">
+                  <span *ngIf="price?.errors?.['required']">Price is required</span>
+                  <span *ngIf="price?.errors?.['min']">Price must be greater than 0</span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="stockQuantity" class="form-label">Stock Quantity</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="stockQuantity"
+                  formControlName="stockQuantity"
+                  [ngClass]="{'is-invalid': stockQuantity?.invalid && (stockQuantity?.dirty || stockQuantity?.touched)}"
+                >
+                <div class="invalid-feedback" *ngIf="stockQuantity?.invalid && (stockQuantity?.dirty || stockQuantity?.touched)">
+                  <span *ngIf="stockQuantity?.errors?.['required']">Stock quantity is required</span>
+                  <span *ngIf="stockQuantity?.errors?.['min']">Stock quantity must be greater than 0</span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select
+                  class="form-select"
+                  id="category"
+                  formControlName="categoryId"
+                  [ngClass]="{'is-invalid': categoryId?.invalid && (categoryId?.dirty || categoryId?.touched)}"
+                >
+                  <option value="">Select a category</option>
+                  <option *ngFor="let category of categories" [ngValue]="category.id">
+                    {{category.name}}
+                  </option>
+                </select>
+                <div class="invalid-feedback" *ngIf="categoryId?.invalid && (categoryId?.dirty || categoryId?.touched)">
+                  <span *ngIf="categoryId?.errors?.['required']">Please select a category</span>
+                </div>
+                <div *ngIf="categories.length === 0 && !isLoading" class="form-text text-muted">
+                  No categories available. Please add categories first.
+                </div>
+                <div *ngIf="isLoading" class="form-text text-muted">
+                  Loading categories...
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="image" class="form-label">Product Image</label>
+                <input
+                  type="file"
+                  class="form-control"
+                  id="image"
+                  accept="image/*"
+                  (change)="onFileSelected($event)"
+                >
+              </div>
+
+              <div *ngIf="imagePreview" class="mb-3">
+                <label class="form-label">Image Preview</label>
+                <div class="image-preview-container">
+                  <img [src]="imagePreview" alt="Product Image Preview" class="img-thumbnail" style="max-height: 200px;">
+                </div>
+              </div>
+
+              <div class="mb-3 form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="active"
+                  formControlName="active"
+                >
+                <label class="form-check-label" for="active">Active</label>
+              </div>
+
+              <div class="alert alert-danger" *ngIf="errorMessage">
+                {{errorMessage}}
+              </div>
+
+              <div class="d-grid gap-2">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="isLoading"
+                >
+                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  {{isLoading ? 'Adding Product...' : 'Add Product'}}
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  [routerLink]="['/admin/products']"
+                  [disabled]="isLoading"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
-  <div class="form-group">
-    <label for="price">Price:</label>
-    <input id="price" name="price" type="number" [(ngModel)]="product.price" required min="0.01" #price="ngModel"
-           [ngClass]="{ 'is-invalid': productForm.submitted && price.invalid }">
-    <div *ngIf="productForm.submitted && price.invalid" class="invalid-feedback">
-      <span *ngIf="price.errors?.['required']">Price is required.</span>
-      <span *ngIf="price.errors?.['min']">Price must be positive.</span>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="stockQuantity">Stock:</label>
-    <input id="stockQuantity" name="stockQuantity" type="number" [(ngModel)]="product.stockQuantity" required min="0" #stockQuantity="ngModel"
-           [ngClass]="{ 'is-invalid': productForm.submitted && stockQuantity.invalid }">
-    <div *ngIf="productForm.submitted && stockQuantity.invalid" class="invalid-feedback">
-      <span *ngIf="stockQuantity.errors?.['required']">Stock quantity is required.</span>
-      <span *ngIf="stockQuantity.errors?.['min']">Stock quantity cannot be negative.</span>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="categoryId">Category:</label>
-    <select id="categoryId" name="categoryId" [(ngModel)]="product.categoryId" required #categoryId="ngModel"
-            [ngClass]="{ 'is-invalid': productForm.submitted && categoryId.invalid }">
-      <option [ngValue]="null" disabled>Select a category</option>
-      <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
-    </select>
-    <div *ngIf="productForm.submitted && categoryId.invalid" class="invalid-feedback">
-      Category is required.
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="description">Description:</label>
-    <textarea id="description" name="description" [(ngModel)]="product.description" rows="4"></textarea>
-  </div>
-
-  <div class="form-group">
-    <label for="imageFile">Product Image:</label>
-    <input id="imageFile" type="file" (change)="onFileSelected($event)" accept="image/*" />
-  </div>
-
-  <div *ngIf="imagePreview" class="image-preview-container">
-    <label>Image Preview:</label><br />
-    <img [src]="imagePreview" alt="Product Image Preview" class="image-preview" />
-  </div>
-
-  <div class="form-group form-check">
-    <input type="checkbox" class="form-check-input" id="active" name="active" [(ngModel)]="product.active">
-    <label class="form-check-label" for="active">Active</label>
-  </div>
-
-  <button type="submit" class="btn-submit" [disabled]="productForm.invalid && productForm.submitted">
-    {{ product.id ? 'Update Product' : 'Add Product' }}
-  </button>
-  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-</form>
+</div>

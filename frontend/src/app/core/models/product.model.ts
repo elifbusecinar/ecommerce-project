@@ -1,13 +1,17 @@
 // frontend/src/app/core/models/product.model.ts
 
+import { Category } from './category.model';
+
 // Review ve Specification arayüzleri backend DTO'larına göre ayarlanmalı
 // Şimdilik Product arayüzüne odaklanıyoruz.
 export interface Review {
-  id?: number; // Backend'den geliyorsa
+  id: number;
+  productId: number;
+  userId: number;
   rating: number;
   comment: string;
-  user?: string; // veya userName
-  date?: string | Date; // Backend'den formatlı string gelebilir
+  createdAt: Date;
+  updatedAt: Date;
   // Backend'deki Review modeline göre alanlar eklenebilir
 }
 
@@ -20,20 +24,34 @@ export interface Specification {
 export interface Product {
   id: number;
   name: string;
-  description?: string;
+  description: string;
   price: number;
-  stock?: number;
-  stockQuantity?: number;
+  stockQuantity: number;
+  stock: number;
   imageUrl?: string;
   images?: string[];
-  categoryName?: string;
-  categoryId?: number;
-  category?: string;
-  rating?: number;
+  categoryId: number;
+  category?: Category;
   active: boolean;
+  createdAt: Date;
+  updatedAt: Date;
   reviews?: Review[];
+  specifications?: ProductSpecification[];
   reviewCount?: number;
-  specifications?: Specification[];
-  createdAt?: string;
-  updatedAt?: string;
+  rating?: number;
+}
+
+export interface ProductSpecification {
+  id: number;
+  productId: number;
+  name: string;
+  value: string;
+}
+
+export interface PaginatedProductResponse {
+  content: Product[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
 }

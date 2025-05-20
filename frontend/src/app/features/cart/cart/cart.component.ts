@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { CartService } from '../../../core/services/cart.service';
 import { CartItem } from '../../../core/models/cart-item.model';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss']
 })
@@ -31,26 +32,20 @@ export class CartComponent implements OnInit {
     });
   }
 
-  increaseQuantity(item: CartItem) {
-    this.cartService.updateQuantity(item.product.id, item.quantity + 1)
+  updateQuantity(productId: number, quantity: number) {
+    if (quantity < 1) return;
+    this.cartService.updateQuantity(productId, quantity)
       .subscribe(() => this.loadCart());
   }
 
-  decreaseQuantity(item: CartItem) {
-    if (item.quantity > 1) {
-      this.cartService.updateQuantity(item.product.id, item.quantity - 1)
-        .subscribe(() => this.loadCart());
-    }
-  }
-
-  removeItem(item: CartItem) {
-    this.cartService.removeItem(item.product.id)
+  removeItem(productId: number) {
+    this.cartService.removeItem(productId)
       .subscribe(() => this.loadCart());
   }
 
   calculateTotals() {
     this.subtotal = this.cartItems.reduce(
-      (sum, item) => sum + (item.product.price * item.quantity),
+      (sum, item) => sum + item.subtotal,
       0
     );
     this.tax = this.subtotal * 0.1; // 10% tax
@@ -58,7 +53,7 @@ export class CartComponent implements OnInit {
   }
 
   proceedToCheckout() {
-    // Implement checkout navigation
+    // TODO: Implement checkout navigation
     console.log('Proceeding to checkout...');
   }
 } 

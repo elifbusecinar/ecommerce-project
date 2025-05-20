@@ -29,26 +29,33 @@
       <h1 class="product-title">{{ product.name }}</h1>
 
       <div class="product-meta">
-        <div class="rating-section" *ngIf="product.rating">
+        <div class="rating-section">
           <div class="stars">
-            <span *ngFor="let star of getRatingStars(product.rating ?? 0)"
-                  class="star"
-                  [class.filled]="star === 1">★</span>
+            <span *ngFor="let star of [1,2,3,4,5]" class="star"
+                  [class.filled]="star <= (product.rating || 0)">★</span>
           </div>
-          <span class="rating-value">{{ product.rating.toFixed(1) }}</span>
-          <a href="#reviews" class="review-count">({{ product.reviews?.length || 0 }} reviews)</a>
+          <span class="rating-value">{{ product.rating || 0 }}</span>
+          <a class="review-count">({{ product.reviewCount || 0 }} reviews)</a>
         </div>
-        <div class="product-category" *ngIf="product.categoryName">
-          Category: <a [routerLink]="['/products']" [queryParams]="{category: product.categoryId}">{{ product.categoryName }}</a>
+        <div class="product-category" *ngIf="product.category">
+          <a [routerLink]="['/products']" [queryParams]="{category: product.categoryId}">
+            {{ product.category.name }}
+          </a>
         </div>
       </div>
 
       <p class="product-price">${{ product.price.toFixed(2) }}</p>
 
-      <div class="stock-status" [ngClass]="{'in-stock': (product.stockQuantity ?? product.stock ?? 0) > 0, 'low-stock': (product.stockQuantity ?? product.stock ?? 0) <= 5 && (product.stockQuantity ?? product.stock ?? 0) > 0, 'out-of-stock': (product.stockQuantity ?? product.stock ?? 0) === 0}">
-        <span *ngIf="(product.stockQuantity ?? product.stock ?? 0) > 5">In Stock</span>
-        <span *ngIf="(product.stockQuantity ?? product.stock ?? 0) <= 5 && (product.stockQuantity ?? product.stock ?? 0) > 0">Low Stock ({{ product.stockQuantity ?? product.stock }}) left)</span>
-        <span *ngIf="(product.stockQuantity ?? product.stock ?? 0) === 0">Out of Stock</span>
+      <div class="stock-status" [ngClass]="{
+        'in-stock': product.stockQuantity > 5,
+        'low-stock': product.stockQuantity <= 5 && product.stockQuantity > 0,
+        'out-of-stock': product.stockQuantity === 0
+      }">
+        <span *ngIf="product.stockQuantity > 5">In Stock</span>
+        <span *ngIf="product.stockQuantity <= 5 && product.stockQuantity > 0">
+          Low Stock ({{ product.stockQuantity }}) left)
+        </span>
+        <span *ngIf="product.stockQuantity === 0">Out of Stock</span>
       </div>
 
       <p class="product-description" *ngIf="product.description">{{ product.description }}</p>
@@ -58,15 +65,15 @@
           <label for="quantity">Quantity:</label>
           <div class="quantity-controls">
             <button (click)="decreaseQuantity()" class="quantity-btn" aria-label="Decrease quantity">-</button>
-            <input id="quantity" type="number" [(ngModel)]="quantity" min="1" [max]="product.stockQuantity ?? product.stock ?? 1" class="quantity-input" aria-label="Product quantity">
+            <input id="quantity" type="number" [(ngModel)]="quantity" min="1" [max]="product.stockQuantity" class="quantity-input" aria-label="Product quantity">
             <button (click)="increaseQuantity()" class="quantity-btn" aria-label="Increase quantity">+</button>
           </div>
         </div>
         <button class="add-to-cart-button"
-                [disabled]="(product.stockQuantity ?? product.stock ?? 0) === 0 || quantity > (product.stockQuantity ?? product.stock ?? 0)"
+                [disabled]="product.stockQuantity === 0 || quantity > product.stockQuantity"
                 (click)="addToCart()">
           <i class="fas fa-shopping-cart"></i>
-          {{ (product.stockQuantity ?? product.stock ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart' }}
+          {{ product.stockQuantity === 0 ? 'Out of Stock' : 'Add to Cart' }}
         </button>
       </div>
     </section>

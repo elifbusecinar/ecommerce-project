@@ -32,6 +32,7 @@ export class CheckoutComponent implements OnInit {
   totalPrice = 0;
   isProcessing = false;
   paymentError: string | null = null;
+  error: string | null = null;
 
     cardOptions: StripeCardElementOptions = {
     style: {
@@ -97,7 +98,7 @@ export class CheckoutComponent implements OnInit {
     this.cartService.getCart().subscribe({
       next: (items) => {
         this.cartItems = items;
-        this.calculateTotal();
+        this.totalPrice = this.calculateTotalPrice();
       },
       error: (error) => {
         this.paymentError = 'Failed to load cart items';
@@ -106,48 +107,40 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
-  calculateTotal(): number {
-    this.totalPrice = this.cartItems.reduce(
-      (sum, item) => sum + ((item.product?.price || 0) * item.quantity),
-      0
-    );
-    return this.totalPrice;
+  calculateTotalPrice(): number {
+    return this.cartItems.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
   }
 
-  updateQuantity(productId: number | undefined, quantity: number): void {
-    if (!productId || quantity < 1) return;
+  updateQuantity(productId: number, quantity: number) {
+    if (quantity < 1) {
+      this.error = 'Quantity must be at least 1';
+      return;
+    }
 
-    const item = this.cartItems.find(item => item.product?.id === productId);
-    if (item && item.product?.stock && quantity <= item.product.stock) {
+    const item = this.cartItems.find(item => item.productId === productId);
+    if (item) {
       this.cartService.updateQuantity(productId, quantity).subscribe({
         next: (items) => {
           this.cartItems = items;
-          this.calculateTotal();
+          this.totalPrice = this.calculateTotalPrice();
         },
         error: (error) => {
+          this.error = 'Failed to update quantity';
           console.error('Error updating quantity:', error);
-          this.paymentError = 'Error updating item quantity.';
         }
       });
-    } else if (item && item.product?.stock && quantity > item.product.stock) {
-        this.paymentError = `Cannot add more than ${item.product.stock} items for ${item.product.name}.`;
     }
   }
 
-removeItem(productId: number | undefined): void {
-    if (!productId) return;
-
-    this.cartService.removeItem(productId).subscribe({
+  removeItem(productId: number) {
+    this.cartService.removeFromCart(productId).subscribe({
       next: (items) => {
         this.cartItems = items;
-        this.calculateTotal();
-        if (items.length === 0) {
-          this.router.navigate(['/cart']);
-        }
+        this.totalPrice = this.calculateTotalPrice();
       },
       error: (error) => {
+        this.error = 'Failed to remove item';
         console.error('Error removing item:', error);
-        this.paymentError = 'Error removing item from cart.';
       }
     });
   }
@@ -214,11 +207,11 @@ removeItem(productId: number | undefined): void {
               console.log('Ödeme başarılı! PaymentIntent ID:', result.paymentIntent.id);
               // 3. Ödeme başarılıysa backend'de siparişi oluştur/tamamla
               const orderItems: OrderItem[] = this.cartItems.map(item => ({
-                productId: item.product.id,
-                productName: item.product.name,
+                productId: item.productId,
+                productName: item.productName,
                 quantity: item.quantity,
-                unitPrice: item.product.price,
-                totalPrice: item.product.price * item.quantity
+                unitPrice: item.unitPrice,
+                totalPrice: item.subtotal
               }));
               const orderData: Partial<Order> = {
                 items: orderItems,
