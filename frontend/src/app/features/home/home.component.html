@@ -31,7 +31,7 @@
       <div class="category-card" *ngFor="let category of categories">
         <img [src]="category.image" [alt]="category.name">
         <div class="category-info">
-          <h3>{{ category.name }}</h3>
+          <!-- <h3>{{ category.name }}</h3> -->
           <button [routerLink]="['/products']" [queryParams]="{category: category.id}">
             Browse {{ category.name }}
           </button>

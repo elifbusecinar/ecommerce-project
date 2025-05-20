@@ -1,20 +1,41 @@
 // Colors
-$primary: #007bff;
-$secondary: #6c757d;
-$success: #28a745;
-$danger: #dc3545;
-$warning: #ffc107;
-$info: #17a2b8;
-$light: #f8f9fa;
-$dark: #343a40;
+$primary-orange: #FFA500;
+$light-orange: #FFDAB9;
+$dark-orange: #CC8400;
+
+$primary-color: $primary-orange;
+$text-color: #333333;
+$text-color-light: #6c757d;
+$background-color: #f8f9fa;
+$surface-color: #ffffff;
+$border-color: #dee2e6;
 
 // Typography
-$font-family-base: 'Roboto', sans-serif;
+$font-family-sans-serif: 'Roboto', 'Open Sans', Arial, sans-serif;
+$font-family-base: $font-family-sans-serif;
 $font-size-base: 1rem;
-$font-weight-light: 300;
 $font-weight-normal: 400;
-$font-weight-medium: 500;
 $font-weight-bold: 700;
+
+// Buttons
+$button-border-radius: 20px;
+$button-font-size: 1rem;
+$button-padding-y: 8px;
+$button-padding-x: 20px;
+
+// Borders
+$border-radius: 8px;
+$border-radius-lg: 12px;
+$border-radius-sm: 4px;
+
+// Header
+$header-background: $surface-color;
+$header-text-color: $text-color;
+$header-logo-height: 80px;
+
+// Diğer
+$primary: $primary-orange;
+$secondary: $text-color-light;
 
 // Spacing
 $spacer: 1rem;
@@ -34,11 +55,6 @@ $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
 $breakpoint-xl: 1200px;
 
-// Border radius
-$border-radius: 4px;
-$border-radius-lg: 8px;
-$border-radius-sm: 2px;
-
 // Shadows
 $box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 $box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -56,4 +72,8 @@ $z-index-tooltip: 1070;
 // Transitions
 $transition-base: all 0.2s ease-in-out;
 $transition-fade: opacity 0.15s linear;
-$transition-collapse: height 0.35s ease; 
+$transition-collapse: height 0.35s ease;
+
+$success: #28a745;
+$danger: #dc3545;
+$warning: #ffc107; 

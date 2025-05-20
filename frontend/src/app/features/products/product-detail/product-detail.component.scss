@@ -594,7 +594,7 @@ $transition-base: all 0.25s ease-in-out;
         transition: background-color 0.2s ease;
 
         &:hover {
-          background-color: darken($primary, 8%);
+          background-color: color.adjust($primary, $lightness: -8%);
         }
       }
     }

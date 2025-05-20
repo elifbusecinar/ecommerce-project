@@ -26,6 +26,13 @@ $box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
 
 @use "sass:color";
 
+.product-list-container,
+.filters,
+.products-grid-container {
+  position: static !important;
+  z-index: auto !important;
+}
+
 .product-list-container {
   max-width: 1200px;
   margin: 2rem auto; // Üst ve alttan boşluk artırıldı
@@ -283,8 +290,8 @@ $box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
 
     &:disabled {
       background-color: $light;
-      color: lighten($secondary, 10%);
-      border-color: darken($light, 5%);
+      color: color.adjust($secondary, $lightness: 10%);
+      border-color: color.adjust($light, $lightness: -5%);
       cursor: not-allowed;
     }
   }

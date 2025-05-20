@@ -33,9 +33,6 @@
           <a routerLink="/categories" routerLinkActive="active">
             <i class="fas fa-th-large"></i> Categories
           </a>
-          <a routerLink="/deals" routerLinkActive="active">
-            <i class="fas fa-tag"></i> Deals
-          </a>
         </div>
 
         <div class="user-actions">
@@ -63,8 +60,8 @@
           </div>
 
           <div class="auth-buttons" *ngIf="!isLoggedIn">
-            <button class="btn btn-outline" (click)="openLoginModal()">Login</button>
-            <button class="btn btn-primary" (click)="openRegisterModal()">Register</button>
+            <a class="btn btn-outline" routerLink="/auth/login">Login</a>
+            <a class="btn btn-primary" routerLink="/auth/register">Register</a>
           </div>
         </div>
       </div>

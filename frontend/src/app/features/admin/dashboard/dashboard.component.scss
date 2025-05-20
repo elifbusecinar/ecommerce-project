@@ -1,7 +1,9 @@
+@use '../../../../styles/variables' as *;
+
 .admin-dashboard-container {
   padding: 20px;
-  font-family: Arial, sans-serif;
-  background-color: #f4f7f6; // Hafif bir arka plan rengi
+  font-family: $font-family-base;
+  background-color: $background-color;
   min-height: calc(100vh - 70px - 40px); // Header ve padding düşüldükten sonra kalan yükseklik
 }
 
@@ -9,19 +11,19 @@
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  background-color: $surface-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
 
   h1 {
     font-size: 2em;
-    color: #333;
+    color: $text-color;
     margin-bottom: 10px;
   }
 
   p {
     font-size: 1em;
-    color: #666;
+    color: $text-color-light;
   }
 }
 
@@ -32,25 +34,25 @@
 }
 
 .nav-card {
-  background-color: #ffffff;
-  border-radius: 8px;
+  background-color: $surface-color;
+  border-radius: $border-radius-lg;
   padding: 25px;
   text-decoration: none;
-  color: #333;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: $text-color;
+  box-shadow: $box-shadow;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex; // İkon ve metni yan yana getirmek için
   align-items: center; // Dikeyde ortalamak için
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: $box-shadow-lg;
   }
 
   .nav-card-icon {
     font-size: 2.5em; // İkon boyutu
     margin-right: 20px;
-    color: #007bff; // İkon rengi
+    color: $primary-color; // İkon rengi
     flex-shrink: 0; // İkonun küçülmesini engelle
   }
 
@@ -59,12 +61,12 @@
       font-size: 1.4em;
       margin-top: 0;
       margin-bottom: 8px;
-      color: #0056b3; // Başlık rengi
+      color: $primary-color; // Başlık rengi
     }
 
     p {
       font-size: 0.95em;
-      color: #555;
+      color: $text-color-light;
       line-height: 1.5;
     }
   }

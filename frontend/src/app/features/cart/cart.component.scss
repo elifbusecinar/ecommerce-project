@@ -1,3 +1,5 @@
+@use '../../../styles/variables' as *;
+
 .cart-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -6,7 +8,7 @@
 
 h1 {
   font-size: 2rem;
-  color: #333;
+  color: $text-color;
   margin-bottom: 2rem;
 }
 
@@ -14,26 +16,26 @@ h1 {
 .empty-cart {
   text-align: center;
   padding: 3rem;
-  background: #f8f9fa;
-  border-radius: 10px;
+  background: $background-color;
+  border-radius: $border-radius-lg;
 
   p {
     font-size: 1.2rem;
-    color: #666;
+    color: $text-color-light;
     margin-bottom: 1.5rem;
   }
 
   .continue-shopping {
     padding: 0.75rem 2rem;
-    background-color: #007bff;
+    background-color: $primary-color;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: $border-radius;
     cursor: pointer;
     transition: background-color 0.3s;
 
     &:hover {
-      background-color: #0056b3;
+      background-color: $dark-orange;
     }
   }
 }
@@ -56,9 +58,9 @@ h1 {
     grid-template-columns: auto 1fr auto;
     gap: 1.5rem;
     padding: 1.5rem;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background: $surface-color;
+    border-radius: $border-radius-lg;
+    box-shadow: $box-shadow;
     margin-bottom: 1rem;
 
     @media (max-width: 576px) {
@@ -69,7 +71,7 @@ h1 {
     .item-image {
       width: 120px;
       height: 120px;
-      border-radius: 5px;
+      border-radius: $border-radius;
       overflow: hidden;
 
       img {
@@ -82,11 +84,11 @@ h1 {
     .item-details {
       h3 {
         margin: 0 0 0.5rem;
-        color: #333;
+        color: $text-color;
       }
 
       .price {
-        color: #007bff;
+        color: $primary-color;
         font-weight: bold;
         margin-bottom: 1rem;
       }
@@ -98,13 +100,13 @@ h1 {
 
         button {
           padding: 0.5rem 1rem;
-          border: 1px solid #ddd;
+          border: 1px solid $border-color;
           background: none;
           cursor: pointer;
-          border-radius: 5px;
+          border-radius: $border-radius;
 
           &:hover {
-            background-color: #f5f5f5;
+            background-color: $background-color;
           }
         }
 
@@ -112,8 +114,8 @@ h1 {
           width: 60px;
           text-align: center;
           padding: 0.5rem;
-          border: 1px solid #ddd;
-          border-radius: 5px;
+          border: 1px solid $border-color;
+          border-radius: $border-radius;
 
           &::-webkit-inner-spin-button,
           &::-webkit-outer-spin-button {
@@ -130,21 +132,21 @@ h1 {
       p {
         font-size: 1.2rem;
         font-weight: bold;
-        color: #333;
+        color: $primary-color;
         margin-bottom: 0.5rem;
       }
 
       .remove-item {
         padding: 0.5rem 1rem;
         background: none;
-        border: 1px solid #dc3545;
-        color: #dc3545;
-        border-radius: 5px;
+        border: 1px solid $danger;
+        color: $danger;
+        border-radius: $border-radius;
         cursor: pointer;
         transition: all 0.3s;
 
         &:hover {
-          background-color: #dc3545;
+          background-color: $danger;
           color: white;
         }
       }
@@ -154,16 +156,16 @@ h1 {
 
 // Cart Summary
 .cart-summary {
-  background: white;
+  background: $surface-color;
   padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
   position: sticky;
   top: 2rem;
 
   h2 {
     font-size: 1.5rem;
-    color: #333;
+    color: $text-color;
     margin-bottom: 1.5rem;
   }
 
@@ -171,13 +173,13 @@ h1 {
     display: flex;
     justify-content: space-between;
     margin-bottom: 1rem;
-    color: #666;
+    color: $text-color-light;
 
     &.total {
       font-size: 1.2rem;
       font-weight: bold;
-      color: #333;
-      border-top: 1px solid #ddd;
+      color: $text-color;
+      border-top: 1px solid $border-color;
       padding-top: 1rem;
       margin-top: 1rem;
     }
@@ -186,17 +188,17 @@ h1 {
   .checkout-btn {
     width: 100%;
     padding: 1rem;
-    background-color: #28a745;
+    background-color: $primary-color;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: $border-radius;
     cursor: pointer;
     font-size: 1.1rem;
     margin-bottom: 1rem;
     transition: background-color 0.3s;
 
     &:hover {
-      background-color: #218838;
+      background-color: $dark-orange;
     }
   }
 
@@ -204,14 +206,14 @@ h1 {
     width: 100%;
     padding: 0.75rem;
     background: none;
-    border: 1px solid #dc3545;
-    color: #dc3545;
-    border-radius: 5px;
+    border: 1px solid $danger;
+    color: $danger;
+    border-radius: $border-radius;
     cursor: pointer;
     transition: all 0.3s;
 
     &:hover {
-      background-color: #dc3545;
+      background-color: $danger;
       color: white;
     }
   }

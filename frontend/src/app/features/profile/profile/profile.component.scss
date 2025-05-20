@@ -1,3 +1,5 @@
+@use '../../../../styles/variables' as *;
+
 .profile-container {
   max-width: 1000px;
   margin: 2rem auto;
@@ -9,21 +11,21 @@
 
   h1 {
     margin: 0 0 1.5rem;
-    color: #333;
+    color: $text-color;
   }
 }
 
 .tabs {
   display: flex;
   gap: 1rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid $border-color;
   margin-bottom: 2rem;
 
   button {
     padding: 0.75rem 1.5rem;
     border: none;
     background: none;
-    color: #666;
+    color: $text-color-light;
     font-weight: 500;
     cursor: pointer;
     position: relative;
@@ -39,15 +41,15 @@
     }
 
     &.active {
-      color: #007bff;
+      color: $primary-color;
 
       &::after {
-        background: #007bff;
+        background: $primary-color;
       }
     }
 
     &:hover {
-      color: #007bff;
+      color: $primary-color;
     }
   }
 }
@@ -60,19 +62,19 @@
 
   h2 {
     margin: 0;
-    color: #333;
+    color: $text-color;
   }
 
   button {
     padding: 0.5rem 1rem;
-    background: #007bff;
+    background: $primary-color;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: $border-radius;
     cursor: pointer;
 
     &.save-btn {
-      background: #28a745;
+      background: $success;
     }
 
     &:hover {
@@ -87,23 +89,23 @@
   label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #666;
+    color: $text-color-light;
   }
 
   input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
     font-size: 1rem;
 
     &:focus {
       outline: none;
-      border-color: #007bff;
+      border-color: $primary-color;
     }
 
     &[readonly] {
-      background: #f8f9fa;
+      background: $background-color;
       cursor: not-allowed;
     }
   }
@@ -116,19 +118,19 @@
 }
 
 .address-card {
-  background: white;
+  background: $surface-color;
   padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
 
   .address-type {
     font-weight: 600;
-    color: #333;
+    color: $text-color;
     margin-bottom: 0.5rem;
   }
 
   .address-details {
-    color: #666;
+    color: $text-color-light;
     margin-bottom: 1rem;
 
     p {
@@ -144,16 +146,16 @@
       flex: 1;
       padding: 0.5rem;
       border: none;
-      border-radius: 4px;
+      border-radius: $border-radius;
       cursor: pointer;
 
       &.edit-btn {
-        background: #6c757d;
+        background: $secondary;
         color: white;
       }
 
       &.delete-btn {
-        background: #dc3545;
+        background: $danger;
         color: white;
       }
 
@@ -170,10 +172,10 @@
 }
 
 .order-card {
-  background: white;
+  background: $surface-color;
   padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
 
   .order-header {
     display: flex;
@@ -182,11 +184,11 @@
 
     .order-id {
       font-weight: 600;
-      color: #333;
+      color: $text-color;
     }
 
     .order-date {
-      color: #666;
+      color: $text-color-light;
     }
   }
 
@@ -198,7 +200,7 @@
 
     .order-total {
       font-weight: 600;
-      color: #333;
+      color: $text-color;
     }
 
     .order-status {
@@ -207,18 +209,18 @@
       font-size: 0.875rem;
 
       &.delivered {
-        background: #d4edda;
-        color: #155724;
+        background: rgba($success, 0.1);
+        color: $success;
       }
 
       &.in.transit {
-        background: #cce5ff;
-        color: #004085;
+        background: rgba($primary-color, 0.1);
+        color: $primary-color;
       }
 
       &.processing {
-        background: #fff3cd;
-        color: #856404;
+        background: rgba($warning, 0.1);
+        color: $warning;
       }
     }
   }
@@ -226,14 +228,14 @@
   .view-order {
     display: inline-block;
     padding: 0.5rem 1rem;
-    background: #007bff;
+    background: $primary-color;
     color: white;
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: $border-radius;
     font-size: 0.875rem;
 
     &:hover {
-      background: #0056b3;
+      background: $dark-orange;
     }
   }
 }

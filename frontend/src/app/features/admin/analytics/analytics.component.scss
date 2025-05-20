@@ -1,3 +1,5 @@
+@use '../../../../styles/variables' as *;
+
 .analytics-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -12,13 +14,13 @@
 }
 
 .stat-card, .dashboard-col {
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border: 1px solid $border-color;
+  background: $surface-color;
+  box-shadow: $box-shadow;
 }
 
 .stat-card {
-  border-radius: 10px;
+  border-radius: $border-radius-lg;
   padding: 1.5rem 2rem;
   min-width: 220px;
   flex: 1;
@@ -29,21 +31,21 @@
 
 .stat-title {
   font-size: 1.1rem;
-  color: #666;
+  color: $text-color-light;
   margin-bottom: 0.5rem;
 }
 
 .stat-value {
   font-size: 2rem;
   font-weight: bold;
-  color: #222;
+  color: $text-color;
   margin-bottom: 0.5rem;
 }
 
 .stat-change {
   font-size: 1rem;
-  &.positive { color: #218838; }
-  &.negative { color: #c82333; }
+  &.positive { color: $success; }
+  &.negative { color: $danger; }
 }
 
 .dashboard-row {
@@ -62,17 +64,18 @@
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 1rem;
+  color: $text-color;
 }
 
 .chart-placeholder {
-  background: #f8f9fa;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
+  background: $background-color;
+  border: 1px dashed $border-color;
+  border-radius: $border-radius-lg;
   height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #aaa;
+  color: $text-color-light;
   font-size: 1.1rem;
 }
 
@@ -82,13 +85,13 @@
   margin-top: 1rem;
   th, td {
     padding: 0.7em 1em;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid $border-color;
     text-align: left;
   }
   th {
-    background: #f8f9fa;
+    background: $background-color;
     font-weight: 600;
-    color: #333;
+    color: $text-color;
   }
   tr:last-child td {
     border-bottom: none;

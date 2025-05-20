@@ -11,6 +11,7 @@ import { OrderTrackingComponent } from './features/orders/order-tracking/order-t
 import { ProfileComponent } from './features/profile/profile/profile.component';
 import { ForbiddenComponent } from './features/forbidden/forbidden.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { CategoriesComponent } from './features/categories/categories.component';
 
 export const appRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -26,6 +27,6 @@ export const appRoutes: Routes = [
   { path: 'order-tracking', component: OrderTrackingComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'admin', loadChildren: () => import('./features/admin/admin-routing.module').then(m => m.AdminRoutingModule), canActivate: [AuthGuard], data: { roles: ['ADMIN'] } },
-  { path: 'forbidden', component: ForbiddenComponent }
-  
+  { path: 'forbidden', component: ForbiddenComponent },
+  { path: 'categories', component: CategoriesComponent }
 ];

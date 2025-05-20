@@ -1,3 +1,5 @@
+@use '../../../styles/variables' as *;
+
 .checkout-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -5,7 +7,7 @@
 
   h1 {
     font-size: 2rem;
-    color: #333;
+    color: $text-color;
     margin-bottom: 2rem;
   }
 }
@@ -22,14 +24,14 @@
 
 // Cart Summary
 .cart-summary {
-  background: white;
+  background: $surface-color;
   padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
 
   h2 {
     font-size: 1.5rem;
-    color: #333;
+    color: $text-color;
     margin-bottom: 1.5rem;
   }
 }
@@ -42,7 +44,7 @@
     grid-template-columns: auto 1fr auto;
     gap: 1rem;
     padding: 1rem 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $border-color;
 
     &:last-child {
       border-bottom: none;
@@ -56,7 +58,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 4px;
+        border-radius: $border-radius;
       }
     }
 
@@ -64,11 +66,11 @@
       h3 {
         margin: 0 0 0.5rem;
         font-size: 1rem;
-        color: #333;
+        color: $text-color;
       }
 
       .price {
-        color: #007bff;
+        color: $primary-color;
         font-weight: bold;
         margin: 0;
       }
@@ -81,9 +83,9 @@
 
         button {
           padding: 0.25rem 0.5rem;
-          border: 1px solid #ddd;
-          background: white;
-          border-radius: 4px;
+          border: 1px solid $border-color;
+          background: $surface-color;
+          border-radius: $border-radius;
           cursor: pointer;
 
           &:disabled {
@@ -96,8 +98,8 @@
           width: 60px;
           text-align: center;
           padding: 0.25rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
+          border: 1px solid $border-color;
+          border-radius: $border-radius;
         }
       }
     }
@@ -107,21 +109,21 @@
 
       p {
         font-weight: bold;
-        color: #333;
+        color: $text-color;
         margin: 0 0 0.5rem;
       }
 
       .remove-item {
         padding: 0.25rem 0.5rem;
-        border: 1px solid #dc3545;
+        border: 1px solid $danger;
         background: none;
-        color: #dc3545;
-        border-radius: 4px;
+        color: $danger;
+        border-radius: $border-radius;
         cursor: pointer;
         transition: all 0.2s;
 
         &:hover {
-          background: #dc3545;
+          background: $danger;
           color: white;
         }
       }
@@ -134,14 +136,14 @@
     display: flex;
     justify-content: space-between;
     margin: 0.75rem 0;
-    color: #666;
+    color: $text-color-light;
 
     &.total {
       margin-top: 1.5rem;
       padding-top: 1.5rem;
-      border-top: 2px solid #eee;
+      border-top: 2px solid $border-color;
       font-weight: bold;
-      color: #333;
+      color: $text-color;
       font-size: 1.2rem;
     }
   }
@@ -149,14 +151,14 @@
 
 // Checkout Form
 .checkout-form {
-  background: white;
+  background: $surface-color;
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
 
   h2 {
     font-size: 1.5rem;
-    color: #333;
+    color: $text-color;
     margin: 0 0 1.5rem;
 
     &:not(:first-child) {
@@ -178,62 +180,62 @@
   label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #333;
+    color: $text-color;
     font-weight: 500;
   }
 
   input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
     font-size: 1rem;
     transition: all 0.2s;
 
     &:focus {
       outline: none;
-      border-color: #007bff;
-      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.25);
     }
 
     &.ng-invalid.ng-touched {
-      border-color: #dc3545;
+      border-color: $danger;
     }
   }
 }
 
 .error {
-  color: #dc3545;
+  color: $danger;
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
 
 .error-message {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: rgba($danger, 0.1);
+  color: $danger;
   padding: 1rem;
-  border-radius: 4px;
+  border-radius: $border-radius;
   margin-bottom: 1rem;
 }
 
 .submit-button {
   width: 100%;
   padding: 1rem;
-  background-color: #28a745;
+  background-color: $success;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: $border-radius;
   font-size: 1.1rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
 
   &:hover:not(:disabled) {
-    background-color: #218838;
+    background-color: darken($success, 10%);
   }
 
   &:disabled {
-    background-color: #6c757d;
+    background-color: $secondary;
     cursor: not-allowed;
     opacity: 0.65;
   }

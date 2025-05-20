@@ -3,4 +3,5 @@ export interface Category {
   name: string;
   description?: string;
   products?: any[]; // Optional products array
+  image?: string; // Kategori resmi
 } 
